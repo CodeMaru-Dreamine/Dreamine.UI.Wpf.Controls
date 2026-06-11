@@ -1,0 +1,73 @@
+﻿<UserControl
+    x:Class="Dreamine.UI.Wpf.Controls.Navigation.DreamineNavigationBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:VsControls="clr-namespace:Dreamine.UI.Wpf.Controls"
+    xmlns:converters="clr-namespace:Dreamine.UI.Wpf.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Dreamine.UI.Wpf.Controls.Navigation"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vsl="clr-namespace:Dreamine.UI.Wpf.Localization"
+    d:DesignHeight="55"
+    d:DesignWidth="1025"
+    vsl:VsLocalization.Language="{Binding Source={StaticResource LangProxy}, Path=CurrentLanguage}"
+    vsl:VsLocalization.LocalizationSection="VsNavigations"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <!--  가로배치(Top/Bottom)  -->
+        <ItemsPanelTemplate x:Key="HorizontalPanel">
+            <UniformGrid Columns="10" Rows="1" />
+        </ItemsPanelTemplate>
+        <!--  세로배치(Left/Right)  -->
+        <ItemsPanelTemplate x:Key="VerticalPanel">
+            <UniformGrid Columns="1" Rows="10" />
+            <!-- 또는 <StackPanel Orientation="Vertical"/> -->
+        </ItemsPanelTemplate>
+        <vsl:StaticLocalizationProxy x:Key="LangProxy" />
+    </UserControl.Resources>
+
+    <ItemsControl d:ItemsSource="{d:DesignInstance Type=local:DesignButtonDatas, IsDesignTimeCreatable=True}" ItemsSource="{Binding ButtonDatas}">
+        <ItemsControl.Style>
+            <Style TargetType="ItemsControl">
+                <!--  기본 가로 배치  -->
+                <Setter Property="ItemsPanel" Value="{StaticResource HorizontalPanel}" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Position, RelativeSource={RelativeSource AncestorType={x:Type local:DreamineNavigationBar}}}" Value="Left">
+                        <Setter Property="ItemsPanel" Value="{StaticResource VerticalPanel}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Position, RelativeSource={RelativeSource AncestorType={x:Type local:DreamineNavigationBar}}}" Value="Right">
+                        <Setter Property="ItemsPanel" Value="{StaticResource VerticalPanel}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ItemsControl.Style>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <VsControls:DreamineButton
+                    Margin="{Binding Margin}"
+                    vsl:VsLocalization.LocalizationKey="{Binding Content}"
+                    Background="{Binding Background}"
+                    BackgroundTop="{Binding BackgroundTop}"
+                    Click="DreamineButton_Click"
+                    Command="{Binding Command}"
+                    CommandParameter="{Binding CommandParameter}"
+                    CommandTarget="{Binding CommandTarget}"
+                    Content="{Binding Content}"
+                    Focusable="True"
+                    FontWeight="{Binding FontWeight}"
+                    Foreground="{Binding Foreground}"
+                    Grade="{Binding Grade}"
+                    ImagePosition="{Binding ImagePosition}"
+                    ImageSource="{Binding ImageSource}"
+                    IsEnabled="{Binding IsEnabled}"
+                    IsFocusableEx="{Binding IsFocusableEx}"
+                    IsSelected="{Binding IsSelected}"
+                    IsTabStop="True"
+                    MinimumGrade="{Binding MinimumGrade}"
+                    ShineColor="{Binding ShineColor}"
+                    ShineColorBottom="{Binding ShineColorBottom}"
+                    Visibility="{Binding Visibility}" />
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>
