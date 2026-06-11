@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Dreamine.MVVM.ViewModels;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -627,144 +627,68 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 	/// Extended button data structure for dynamic navigation bar button creation.
 	/// Supports styling, command binding, and user-level access control.
 	/// </summary>
-	public partial class ButtonData : ObservableObject
+	public class ButtonData : ViewModelBase
 	{
-		/// <summary>
-		/// Gets or sets the text displayed on the button.
-		/// </summary>
-		[ObservableProperty]
 		private string _content = string.Empty;
+		public string Content { get => _content; set { if (SetProperty(ref _content, value)) OnPropertyChanged(nameof(ImageSource)); } }
 
-		/// <summary>
-		/// Gets or sets the image path as a string (supports pack URI or absolute path).
-		/// </summary>
-		[ObservableProperty]
 		private string _imagePath = string.Empty;
+		public string ImagePath
+		{
+			get => _imagePath;
+			set { if (SetProperty(ref _imagePath, value)) OnPropertyChanged(nameof(ImageSource)); }
+		}
 
-		/// <summary>
-		/// Gets the loaded image from the <see cref="ImagePath"/>.
-		/// Returns null if the path is invalid or loading fails.
-		/// </summary>
 		public ImageSource ImageSource
 		{
 			get
 			{
-				if (string.IsNullOrWhiteSpace(ImagePath))
-					return null!;
-				try
-				{
-					return new BitmapImage(new Uri(ImagePath, UriKind.RelativeOrAbsolute));
-				}
-				catch
-				{
-					return null!;
-				}
+				if (string.IsNullOrWhiteSpace(ImagePath)) return null!;
+				try { return new BitmapImage(new Uri(ImagePath, UriKind.RelativeOrAbsolute)); }
+				catch { return null!; }
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the text color of the button.
-		/// </summary>
-		[ObservableProperty]
 		private Brush _foreground = Brushes.Black;
+		public Brush Foreground { get => _foreground; set => SetProperty(ref _foreground, value); }
 
-		/// <summary>
-		/// Gets or sets the Top gradient shine color.
-		/// </summary>
-		[ObservableProperty]
 		private Brush _shineColor = Brushes.LightBlue;
+		public Brush ShineColor { get => _shineColor; set => SetProperty(ref _shineColor, value); }
 
-		/// <summary>
-		/// Gets or sets the Bottom gradient shine color.
-		/// </summary>
-		[ObservableProperty]
 		private Brush _shineColorBottom = Brushes.White;
+		public Brush ShineColorBottom { get => _shineColorBottom; set => SetProperty(ref _shineColorBottom, value); }
 
-		/// <summary>
-		/// Gets or sets the Top background gradient color.
-		/// </summary>
-		[ObservableProperty]
 		private Brush _backgroundTop = Brushes.Wheat;
+		public Brush BackgroundTop { get => _backgroundTop; set => SetProperty(ref _backgroundTop, value); }
 
-		/// <summary>
-		/// Gets or sets the background color of the button.
-		/// </summary>
-		[ObservableProperty]
 		private Brush _background = Brushes.DarkBlue;
+		public Brush Background { get => _background; set => SetProperty(ref _background, value); }
 
-		/// <summary>
-		/// Gets or sets the position of the icon relative to the text.
-		/// </summary>
 		public DreamineButton.eIconPosition ImagePosition { get; set; } = DreamineButton.eIconPosition.Left;
 
-		/// <summary>
-		/// Gets or sets whether the button is enabled.
-		/// </summary>
-		[ObservableProperty]
 		private bool _isEnabled = true;
+		public bool IsEnabled { get => _isEnabled; set => SetProperty(ref _isEnabled, value); }
 
-		/// <summary>
-		/// Gets or sets the font weight of the button text.
-		/// </summary>
 		public FontWeight FontWeight { get; set; } = FontWeights.Normal;
-
-		/// <summary>
-		/// Gets or sets the visibility State of the button.
-		/// </summary>
 		public Visibility Visibility { get; set; } = Visibility.Visible;
-
-		/// <summary>
-		/// Gets or sets the margin around the button.
-		/// </summary>
 		public Thickness Margin { get; set; } = new Thickness(0, 0, 4, 0);
-
-		/// <summary>
-		/// Gets or sets the parameter passed to the bound command when executed.
-		/// </summary>
 		public object CommandParameter { get; set; } = null!;
-
-		/// <summary>
-		/// Gets or sets the target element that the command acts upon.
-		/// </summary>
 		public IInputElement CommandTarget { get; set; } = null!;
 
-		/// <summary>
-		/// Gets or sets the command to execute when the button is clicked.
-		/// </summary>
-		[ObservableProperty]
 		private ICommand? _command;
+		public ICommand? Command { get => _command; set => SetProperty(ref _command, value); }
 
-		/// <summary>
-		/// Gets or sets whether this button is currently selected.
-		/// Used for visual highlighting or State tracking.
-		/// </summary>
-		[ObservableProperty]
 		private bool _isSelected = false;
+		public bool IsSelected { get => _isSelected; set => SetProperty(ref _isSelected, value); }
 
-		/// <summary>
-		/// Gets or sets whether the button can receive focus.
-		/// </summary>
-		[ObservableProperty]
 		private bool _isFocusableEx = true;
+		public bool IsFocusableEx { get => _isFocusableEx; set => SetProperty(ref _isFocusableEx, value); }
 
-		/// <summary>
-		/// Gets or sets the user's role grade.
-		/// Typically assigned at runtime depending on login session.
-		/// </summary>
-		[ObservableProperty]
 		private int _grade = 0;
+		public int Grade { get => _grade; set => SetProperty(ref _grade, value); }
 
-		/// <summary>
-		/// Gets or sets the minimum required user grade to use this button.
-		/// Used for permission-based UI filtering.
-		/// </summary>
-		[ObservableProperty]
 		private int _minimumGrade = 0;
-
-		partial void OnImagePathChanged(string value)
-		{
-			OnPropertyChanged(nameof(ImageSource));
-		}
+		public int MinimumGrade { get => _minimumGrade; set => SetProperty(ref _minimumGrade, value); }
 	}
 
 	/// <summary>

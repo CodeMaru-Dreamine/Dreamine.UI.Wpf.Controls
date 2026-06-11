@@ -20,15 +20,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\UI.Abstractions\Dreamine.UI.Abstractions.csproj" />
 		<ProjectReference Include="..\UI.Wpf\Dreamine.UI.Wpf.csproj" />
 		<ProjectReference Include="..\Core\Dreamine.MVVM.Core.csproj" />
 		<ProjectReference Include="..\Interfaces\Dreamine.MVVM.Interfaces.csproj" />
 		<ProjectReference Include="..\Locators\Dreamine.MVVM.Locators.csproj" />
+		<ProjectReference Include="..\ViewModels\Dreamine.MVVM.ViewModels.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,7 +1,6 @@
 ﻿// \file DreamineButton.cs
 // \brief Custom button control for VsLibrary framework. Supports Icon/Shadow/Permission/AttachedCommand.
 
-using CommunityToolkit.Mvvm.Input; // \brief IAsyncRelayCommand
 using System;
 using System.ComponentModel; // \brief DesignerProperties
 using System.Linq;
@@ -792,15 +791,9 @@ namespace Dreamine.UI.Wpf.Controls
 				/// <summary>
 				/// Execute async command or sync command depending on the ICommand type.
 				/// </summary>
-				if (command is IAsyncRelayCommand asyncCmd)
+				if (command.CanExecute(parameter))
 				{
-					if (asyncCmd.CanExecute(parameter))
-						await asyncCmd.ExecuteAsync(parameter);
-				}
-				else
-				{
-					if (command.CanExecute(parameter))
-						command.Execute(parameter);
+					command.Execute(parameter);
 				}
 
 				eventArgs.Handled = true;
