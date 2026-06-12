@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using Dreamine.MVVM.Core;
-using VsLibrary.Common.MVVM.ViewModels;
+using Dreamine.MVVM.ViewModels;
 
 namespace Dreamine.UI.Wpf.Controls.ViewRegion
 {
@@ -98,13 +98,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 			{
 				if (useSingletonView)
 				{
-					// \note Register mapping if possible
-					if (viewType != null)
-					{
-						VsContainer.Instance.RegisterView(viewType, viewModelType);
-					}
-
-					vmInstance = VsContainer.Instance.Resolve(viewModelType, true) ?? Activator.CreateInstance(viewModelType);
+					vmInstance = DMContainer.Resolve(viewModelType) ?? Activator.CreateInstance(viewModelType);
 				}
 				else
 				{
@@ -117,7 +111,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 					int typeIndex = ViewModelKeyCache.IndexMap[typeName]++;
 					uniqueKey = $"{typeName}_{typeIndex:D2}";
 
-					vmInstance = VsContainer.Instance.Resolve(viewModelType, true, uniqueKey) ?? Activator.CreateInstance(viewModelType);
+					vmInstance = Activator.CreateInstance(viewModelType);
 				}
 			}
 
@@ -278,7 +272,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 			// 1차: VsControls를 통한 생성 시도 (항상 새 인스턴스)
 			try
 			{
-				instance = VsContainer.Instance.Resolve(viewType, createNew: true);
+				instance = DMContainer.Resolve(viewType);
 			}
 			catch (Exception ex)
 			{

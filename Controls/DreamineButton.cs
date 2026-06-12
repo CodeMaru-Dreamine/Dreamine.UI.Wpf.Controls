@@ -11,8 +11,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using Dreamine.MVVM.Core;
-using Dreamine.MVVM.Interfaces.DependencyInjection;
 using Dreamine.UI.Wpf.Controls.MessageBox;
 using Dreamine.UI.Wpf.Controls.Navigation;
 
@@ -58,12 +56,6 @@ namespace Dreamine.UI.Wpf.Controls
 		 * \brief Icon position.
 		 */
 		public enum eIconPosition { Left, Right, Top, Bottom, Full }
-
-		/** \brief DI Container (resolved once in static constructor). */
-		private static readonly Dreamine.MVVM.Interfaces.DependencyInjection.IDMContainer _container;
-
-		/** \brief Snapshot of the current logged-in user. */
-		private UserItem _user = null!;
 
 		#region Template parts
 
@@ -396,7 +388,7 @@ namespace Dreamine.UI.Wpf.Controls
 
 			try
 			{
-				var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineButtonStyle.xaml",
+				var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineButtonStyle.xaml",
 								  UriKind.RelativeOrAbsolute);
 
 				var app = Application.Current;
@@ -418,7 +410,6 @@ namespace Dreamine.UI.Wpf.Controls
 				// \brief Guard for design-time / missing resources, etc.
 			}
 
-			_container = VsContainer.Instance;
 		}
 
 		/**
@@ -426,19 +417,6 @@ namespace Dreamine.UI.Wpf.Controls
 		 */
 		public DreamineButton()
 		{
-			// \brief Guard design-time (DI/VM access may crash designer).
-			if (DesignerProperties.GetIsInDesignMode(this)) return;
-
-			try
-			{
-				var loginControl = _container.Resolve<VsLoginControlViewModel>();
-				loginControl.LoginChanged -= OnLoginChanged;
-				loginControl.LoginChanged += OnLoginChanged;
-			}
-			catch
-			{
-				// \brief Safe guard for runtime environment / DI differences.
-			}
 		}
 
 		/**
@@ -477,19 +455,6 @@ namespace Dreamine.UI.Wpf.Controls
 				Direction = ShadowDirection,
 				Color = ShadowColor
 			};
-		}
-
-		/**
-		 * \brief Handles login user changes.
-		 */
-		private void OnLoginChanged(UserItem? user)
-		{
-			if (user == null) return;
-
-			_user = user;
-			VsNavigationHelper.CurrentUser = user;
-			if (OnceLogin) VsNavigationHelper.IsOnceLoginEnabled = true;
-			Grade = _user.Grade;
 		}
 
 		/** \brief Bitmap icon source. */
@@ -706,83 +671,18 @@ namespace Dreamine.UI.Wpf.Controls
 			{
 				if (d is DreamineButton btn)
 				{
-					/// <summary>
-					/// Applies the authenticated user to global context and button state.
-					/// </summary>
-					/// <param name="user">The authenticated user.</param>
-					void ApplyUser(UserItem user)
+					if (btn.MinimumGrade > 0 && btn.Grade < btn.MinimumGrade)
 					{
-						VsNavigationHelper.CurrentUser = user;
-						btn.Grade = user.Grade;
+						DreamineMessageBox.ShowAsync(
+							"권한이 부족합니다.",
+							"Access Denied",
+							autoClick: MessageBoxResult.OK,
+							autoClickDelaySeconds: 3);
+						return;
 					}
 
-					/// <summary>
-					/// Returns true if the given user satisfies the minimum grade requirement.
-					/// </summary>
-					/// <param name="user">The user to validate.</param>
-					/// <returns>True if user.Grade is sufficient; otherwise false.</returns>
-					bool IsUserSufficient(UserItem user) => user.Grade >= btn.MinimumGrade;
-
-					int currentGrade = VsNavigationHelper.CurrentUser?.Grade ?? 0;
-					bool forceLogin = !VsNavigationHelper.IsOnceLoginEnabled;
-					bool insufficient = currentGrade < btn.MinimumGrade;
-
-					if (!forceLogin)
-					{
-						/// <summary>
-						/// Non-forced login mode: block execution when the button grade is below requirement.
-						/// </summary>
-						if (btn.Grade < btn.MinimumGrade)
-						{
-							DreamineMessageBox.ShowAsync(
-								"Please log in to continue.",
-								"Login Required",
-								autoClick: MessageBoxResult.OK,
-								autoClickDelaySeconds: 3);
-							return;
-						}
-					}
-					else
-					{
-						/// <summary>
-						/// Forced login mode: authenticate when login is forced or current grade is insufficient.
-						/// </summary>
-						if (forceLogin || insufficient)
-						{
-							if (!VsLoginControlViewModel.IsShow)
-							{
-								var user = await VsLoginControlViewModel.ShowLoginDialogAsync();
-
-								/// <summary>
-								/// Fallback to a default root account when the login UI is not used/available.
-								/// NOTE: This policy must be explicitly allowed in your environment.
-								/// </summary>
-								if (user == null)
-								{
-									user = new UserItem
-									{
-										UserID = "root",
-										Password = string.Empty,
-										Grade = 2
-									};
-								}
-
-								/// <summary>
-								/// Block execution if the authenticated user does not satisfy the requirement.
-								/// </summary>
-								if (!IsUserSufficient(user))
-									return;
-
-								ApplyUser(user);
-							}
-						}
-					}
-
-					/// <summary>
-					/// Notify navigation bar about the button click (if the DataContext is a ButtonData).
-					/// </summary>
 					if (btn.DataContext is ButtonData btnData)
-						VsNavigationBar.NotifyButtonClicked(btnData);
+						DreamineNavigationBar.NotifyButtonClicked(btnData);
 				}
 
 				if (command == null)

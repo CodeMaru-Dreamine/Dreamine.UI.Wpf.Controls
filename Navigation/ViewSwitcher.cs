@@ -4,8 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using Dreamine.MVVM.Core;
-using Dreamine.MVVM.Interfaces.DependencyInjection;
+using Dreamine.MVVM.Interfaces;
 
 namespace Dreamine.UI.Wpf.Controls.ViewRegion
 {
@@ -74,7 +73,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 			{
 				var popup = _popupWindows[viewName];
 
-				//var vm = VsContainer.Instance.Resolve(vmType);
+				//var vm = DMContainer.Resolve(vmType);
 				if (!popup.IsVisible)
 				{
 					NotifyShown(viewName);
@@ -107,17 +106,23 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 			}
 		}
 
+		private static readonly Dictionary<string, object> _viewModelRegistry = new();
+
+		public static void RegisterViewModel(string viewName, object vm)
+			=> _viewModelRegistry[viewName] = vm;
+
 		public static void NotifyShown(string viewName)
 		{
-			var regionManager = VsContainer.Instance.GetViewModel(viewName);
-			if (regionManager is IActivatable act) act.Activate();
-			if (regionManager is IVisibilityAware vis) vis.OnShown();
+			if (!_viewModelRegistry.TryGetValue(viewName, out var vm)) return;
+			if (vm is IActivatable act) act.Activate();
+			if (vm is IVisibilityAware vis) vis.OnShown();
 		}
+
 		public static void NotifyHidden(string viewName)
 		{
-			var regionManager = VsContainer.Instance.GetViewModel(viewName);
-			if (regionManager is IVisibilityAware vis) vis.OnHidden();
-			if (regionManager is IActivatable act) act.Deactivate();
+			if (!_viewModelRegistry.TryGetValue(viewName, out var vm)) return;
+			if (vm is IVisibilityAware vis) vis.OnHidden();
+			if (vm is IActivatable act) act.Deactivate();
 		}
 	}
 }

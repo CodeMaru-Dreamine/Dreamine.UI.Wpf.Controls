@@ -32,7 +32,7 @@ namespace Dreamine.UI.Wpf.Controls
 
 			try
 			{
-				var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineCheckBoxStyle.xaml", UriKind.RelativeOrAbsolute);
+				var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineCheckBoxStyle.xaml", UriKind.RelativeOrAbsolute);
 
 				var app = Application.Current;
 				if (app != null)

@@ -6,15 +6,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using VsLibrary.Common.Log;
-using Dreamine.MVVM.Core;
-using Dreamine.MVVM.Interfaces.DependencyInjection;
-using Dreamine.UI.Wpf.Controls.LayoutPanels.TopPanel;
-using Dreamine.UI.Wpf.Localization;
 using Dreamine.UI.Wpf.Controls.MessageBox;
-using Dreamine.UI.Wpf.Controls.Popup;
-using Dreamine.UI.Wpf.Controls;
-using Dreamine.UI.Wpf.Controls.Auth.Repository;
+using Dreamine.UI.Wpf.Localization;
 
 namespace Dreamine.UI.Wpf.Controls.Navigation
 {
@@ -174,9 +167,6 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		/// </remarks>
 		public void InitializeOrResetLogoutTimer()
 		{
-			if (VsNavigationHelper.CurrentUser == null || VsNavigationHelper.IsOnceLoginEnabled == false)
-				return; // 로그인 안돼 있으면 무시
-
 			if (_logoutTimer == null)
 			{
 				_logoutTimer = new DispatcherTimer
@@ -219,29 +209,14 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		/// </remarks>
 		private void OnAutoLogout()
 		{
-			// 모든 열린 윈도우 중 팝업(메인 제외)을 숨김
 			foreach (Window window in Application.Current.Windows)
 			{
-				if (window.Owner != null)
-				{
-					if (window.IsVisible == true)
-					{
-						var popup = VsContainer.Instance.Resolve<IPopupService>();
-						popup.CloseAll();
-						window.Hide();  // 20250918 화면만 숨김
-										//return;       
-					}
-				}
+				if (window.Owner != null && window.IsVisible)
+					window.Hide();
 			}
 
 			foreach (var btn in ButtonDatas)
-			{
 				btn.Grade = 0;
-			}
-
-			LoginRepository.Instance.CurrentUser = null;
-
-			VsNavigationHelper.CurrentUser = null;
 
 			AutoLogoutOccurred?.Invoke(this, EventArgs.Empty);
 
@@ -291,33 +266,11 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		private static void OnOnceLoginChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if (d is DreamineNavigationBar nav)
-			{
 				VsNavigationHelper.IsOnceLoginEnabled = (bool)e.NewValue;
-			}
-		}
-
-		/// <summary>
-		/// Static container Instance used to resolve services (e.g., <see cref="VsLoginControlViewModel"/>).
-		/// </summary>
-		private static readonly IVsContainer _container = null!;
-
-		/// <summary>
-		/// Stores the currently logged-in user. Set after a successful login.
-		/// </summary>
-		private UserItem _user = null!;
-
-		/// <summary>
-		/// Static constructor for <see cref="DreamineNavigationBar"/>.
-		/// Initializes the dependency injection container.
-		/// </summary>
-		static DreamineNavigationBar()
-		{
-			_container = VsContainer.Instance;
 		}
 
 		/// <summary>
 		/// Initializes a new Instance of the <see cref="DreamineNavigationBar"/> control.
-		/// Sets up login tracking, global input hooks, and default button collection.
 		/// </summary>
 		public DreamineNavigationBar()
 		{
@@ -326,41 +279,9 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 			if (ButtonDatas == null)
 				ButtonDatas = new ObservableCollection<ButtonData>();
 
-			var loginControl = _container.Resolve<VsLoginControlViewModel>();
-
-			loginControl.LoginChanged -= OnLoginChanged;
-			loginControl.LoginChanged += OnLoginChanged;
-
 			EnsureGlobalInputHook();
 			_instances.Add(this);
 			Unloaded += (_, _) => _instances.Remove(this);
-		}
-
-		/// <summary>
-		/// Handles login completion event.
-		/// Updates internal user State, enables once-login _mode if applicable,
-		/// and refreshes all button access grades.
-		/// </summary>
-		/// <Param name="user">
-		/// The logged-in <see cref="UserItem"/>.  
-		/// If null, the event is ignored (e.g., logout or dialog closed).
-		/// </Param>
-		private void OnLoginChanged(UserItem? user)
-		{
-			if (user == null) return;
-
-			_user = user;
-			VsNavigationHelper.CurrentUser = user;
-
-			if (OnceLogin == true)
-			{
-				VsNavigationHelper.IsOnceLoginEnabled = OnceLogin;
-			}
-
-			foreach (var btn in ButtonDatas)
-			{
-				btn.Grade = _user.Grade;
-			}
 		}
 
 		/// <summary>
@@ -541,19 +462,9 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 					}
 					btn.IsSelected = false;
 				}
-				var localizedMenu = VsLocalizationManager.Get(
-					VsLocalizationManager.CurrentLanguage,
-					"VsNavigations",
-					clickedButton.Content) ?? clickedButton.Content;
-
-				//LogManager.Write(
-				//	$"🚀 Button clicked: Original = '{clickedButton.Content}',  Lang = {VsLocalizationManager.CurrentLanguage}, Localized = '{localizedMenu}'",
-				//	LogType.Info);
-
 				if (clickedButton.IsFocusableEx)
 				{
 					clickedButton.IsSelected = true;
-					EquipmentStateService.Instance.CurrentMenu = localizedMenu;
 				}
 				else
 				{
@@ -600,15 +511,6 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		/// <Param name="e">Click event arguments.</Param>
 		private void DreamineButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (sender is DreamineButton button && button.DataContext is ButtonData btnData)
-			{
-				int currentGrade = _user != null ? _user.Grade : 0;
-
-				if (currentGrade < btnData.MinimumGrade)
-				{
-					return;
-				}
-			}
 		}
 	}
 
@@ -696,18 +598,9 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 	/// </summary>
 	public static class VsNavigationHelper
 	{
-		/// <summary>
-		/// Gets or sets whether one-time login _mode is enabled.
-		/// If true, the login dialog will not appear again after a successful login, as long as the user has sufficient privileges.
-		/// If false, the login dialog will appear every time regardless of previous login success (enhanced security _mode).
-		/// </summary>
 		public static bool IsOnceLoginEnabled { get; set; } = false;
 
-		/// <summary>
-		/// Gets or sets the current user info after a successful login.
-		/// Used only if <see cref="IsOnceLoginEnabled"/> is true.
-		/// </summary>
-		public static UserItem? CurrentUser { get; set; } = null;
+		public static object? CurrentUser { get; set; } = null;
 
 		/// <summary>
 		/// Creates a new <see cref="ButtonData"/> Instance with predefined common styles applied.

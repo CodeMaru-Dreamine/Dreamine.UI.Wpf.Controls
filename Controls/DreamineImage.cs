@@ -6,7 +6,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 using Dreamine.MVVM.Core;
-using Dreamine.MVVM.Interfaces.DependencyInjection;
 
 namespace Dreamine.UI.Wpf.Controls
 {
@@ -23,7 +22,6 @@ namespace Dreamine.UI.Wpf.Controls
 	/// </summary>
 	public class DreamineImage : Control
 	{
-		private static readonly IDMContainer _container = null!;
 
 		// Control 클래스에는 이미 BorderThickness, BorderBrush가 있습니다.
 		// CornerRadius는 Control에 없으므로 직접 추가합니다.
@@ -145,7 +143,7 @@ namespace Dreamine.UI.Wpf.Controls
 				DefaultStyleKeyProperty.OverrideMetadata(typeof(DreamineImage),
 					new FrameworkPropertyMetadata(typeof(DreamineImage)));
 
-				var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineImageStyle.xaml", UriKind.RelativeOrAbsolute);
+				var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineImageStyle.xaml", UriKind.RelativeOrAbsolute);
 				bool alreadyAdded = Application.Current.Resources.MergedDictionaries
 					.OfType<ResourceDictionary>()
 					.Any(x => x.Source != null && x.Source.Equals(uri));
@@ -156,7 +154,6 @@ namespace Dreamine.UI.Wpf.Controls
 					Application.Current.Resources.MergedDictionaries.Add(dict);
 				}
 
-				_container = VsContainer.Instance;
 			}
 			catch
 			{

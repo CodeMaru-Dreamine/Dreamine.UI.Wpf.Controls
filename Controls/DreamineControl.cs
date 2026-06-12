@@ -26,7 +26,7 @@ using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Threading;
 using Dreamine.MVVM.Core;
-using Dreamine.MVVM.Interfaces.DependencyInjection;
+using Dreamine.MVVM.Interfaces;
 using Dreamine.UI.Wpf.Controls.ViewRegion;
 
 namespace Dreamine.UI.Wpf.Controls
@@ -630,20 +630,6 @@ namespace Dreamine.UI.Wpf.Controls
                 result.View.IsVisibleChanged -= OnRootIsVisibleChanged;
                 result.View.IsVisibleChanged += OnRootIsVisibleChanged;
 
-                // \brief Region registration
-                if (VsContainer.Instance.RegionManager is RegionManager region)
-                {
-                    if (UseSingletonView)
-                    {
-                        region.RegisterRegion(name, result.View.GetType());
-                        region.RegisterRegionControl(name, result.View);
-                    }
-                    else
-                    {
-                        region.RegisterRegion(result.UniqueKey!, result.View.GetType());
-                        region.RegisterRegionControl(result.UniqueKey!, result.View);
-                    }
-                }
 
                 _containerGrid.Children.Add(result.View);
 
@@ -1029,7 +1015,7 @@ namespace Dreamine.UI.Wpf.Controls
 
             try
             {
-                var vm = VsContainer.Instance.Resolve(vmType);
+                var vm = DMContainer.Resolve(vmType);
                 if (vm != null)
                 {
                     view.DataContext = vm;

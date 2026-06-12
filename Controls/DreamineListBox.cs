@@ -37,7 +37,7 @@ namespace Dreamine.UI.Wpf.Controls
                 new FrameworkPropertyMetadata(typeof(DreamineListBox)));
 
             // \brief Merge style dictionary once
-            var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineListBoxStyle.xaml", UriKind.RelativeOrAbsolute);
+            var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineListBoxStyle.xaml", UriKind.RelativeOrAbsolute);
 
             if (Application.Current != null)
             {
@@ -75,7 +75,7 @@ namespace Dreamine.UI.Wpf.Controls
             if (app == null)
                 return;
 
-            var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineListBoxStyle.xaml", UriKind.RelativeOrAbsolute);
+            var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineListBoxStyle.xaml", UriKind.RelativeOrAbsolute);
 
             bool alreadyAdded =
                 app.Resources.MergedDictionaries

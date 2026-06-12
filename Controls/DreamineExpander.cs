@@ -30,7 +30,7 @@ namespace Dreamine.UI.Wpf.Controls
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(DreamineExpander),
 				new FrameworkPropertyMetadata(typeof(DreamineExpander)));
 
-			var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineExpanderStyle.xaml", UriKind.RelativeOrAbsolute);
+			var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineExpanderStyle.xaml", UriKind.RelativeOrAbsolute);
 
 			if (Application.Current != null)
 			{

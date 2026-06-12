@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Dreamine.MVVM.Core;
+using Dreamine.MVVM.ViewModels;
 
 namespace Dreamine.UI.Wpf.Controls
 {
@@ -13,7 +14,7 @@ namespace Dreamine.UI.Wpf.Controls
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(DreamineTabControl),
 				new FrameworkPropertyMetadata(typeof(DreamineTabControl)));
 
-			var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineTabControlStyle.xaml", UriKind.RelativeOrAbsolute);
+			var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineTabControlStyle.xaml", UriKind.RelativeOrAbsolute);
 
 			if (Application.Current != null)
 			{

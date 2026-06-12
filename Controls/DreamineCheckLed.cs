@@ -10,18 +10,6 @@ using System.Windows.Media;
 namespace Dreamine.UI.Wpf.Controls
 {
 	/// <summary>
-	/// @brief LED 점의 표시 위치(코너)를 지정하는 열거형입니다.
-	/// @details TopLeft / TopRight / BottomLeft / BottomRight 중 하나를 지정합니다.
-	/// </summary>
-	public enum eLedCorner
-	{
-		TopLeft,
-		TopRight,
-		BottomLeft,
-		BottomRight
-	}
-
-	/// <summary>
 	/// @brief 버튼 등의 코너에 LED(외곽 원 + 내부 코어)를 오버레이처럼 얹는 경량 컨트롤입니다.
 	/// @details 템플릿 내부 Canvas 위에 두 개의 Ellipse(Outer/Inner)를 배치하고,
 	/// IsOn/IsPulse에 따라 브러시와 애니메이션을 전환합니다.
@@ -74,7 +62,7 @@ namespace Dreamine.UI.Wpf.Controls
 					typeof(DreamineCheckLed),
 					new FrameworkPropertyMetadata(false));
 
-				var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineCheckLedStyle.xaml",
+				var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineCheckLedStyle.xaml",
 									UriKind.RelativeOrAbsolute);
 				var app = Application.Current;
 				if (app != null)

@@ -24,7 +24,7 @@ namespace Dreamine.UI.Wpf.Controls
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(DreamineDataGrid),
 				new FrameworkPropertyMetadata(typeof(DreamineDataGrid)));
 
-			var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineDataGridStyle.xaml", UriKind.RelativeOrAbsolute);
+			var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineDataGridStyle.xaml", UriKind.RelativeOrAbsolute);
 
 			if (Application.Current != null)
 			{

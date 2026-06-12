@@ -35,7 +35,7 @@ namespace Dreamine.UI.Wpf.Controls
                 new FrameworkPropertyMetadata(typeof(DreaminePasswordBox)));
 
             // \brief 스타일 리소스 병합
-            var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreaminePasswordBoxStyle.xaml", UriKind.RelativeOrAbsolute);
+            var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreaminePasswordBoxStyle.xaml", UriKind.RelativeOrAbsolute);
 
             if (Application.Current != null)
             {

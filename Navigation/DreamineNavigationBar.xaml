@@ -3,15 +3,15 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:VsControls="clr-namespace:Dreamine.UI.Wpf.Controls"
-    xmlns:converters="clr-namespace:Dreamine.UI.Wpf.Converters"
+    xmlns:converters="clr-namespace:Dreamine.UI.Wpf.Converters;assembly=Dreamine.UI.Wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Dreamine.UI.Wpf.Controls.Navigation"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vsl="clr-namespace:Dreamine.UI.Wpf.Localization"
+    xmlns:vsl="clr-namespace:Dreamine.UI.Wpf.Localization;assembly=Dreamine.UI.Wpf"
     d:DesignHeight="55"
     d:DesignWidth="1025"
-    vsl:VsLocalization.Language="{Binding Source={StaticResource LangProxy}, Path=CurrentLanguage}"
-    vsl:VsLocalization.LocalizationSection="VsNavigations"
+    vsl:DreamineLocalization.Language="{Binding Source={StaticResource LangProxy}, Path=CurrentLanguage}"
+    vsl:DreamineLocalization.LocalizationSection="VsNavigations"
     mc:Ignorable="d">
     <UserControl.Resources>
         <!--  가로배치(Top/Bottom)  -->
@@ -45,7 +45,7 @@
             <DataTemplate>
                 <VsControls:DreamineButton
                     Margin="{Binding Margin}"
-                    vsl:VsLocalization.LocalizationKey="{Binding Content}"
+                    vsl:DreamineLocalization.LocalizationKey="{Binding Content}"
                     Background="{Binding Background}"
                     BackgroundTop="{Binding BackgroundTop}"
                     Click="DreamineButton_Click"

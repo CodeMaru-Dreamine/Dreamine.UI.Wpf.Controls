@@ -135,7 +135,7 @@ namespace Dreamine.UI.Wpf.Controls
 				typeof(DreamineTimeSpinner),
 				new FrameworkPropertyMetadata(typeof(DreamineTimeSpinner)));
 
-			var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineTimeSpinnerStyle.xaml", UriKind.RelativeOrAbsolute);
+			var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineTimeSpinnerStyle.xaml", UriKind.RelativeOrAbsolute);
 
 			if (Application.Current != null)
 			{

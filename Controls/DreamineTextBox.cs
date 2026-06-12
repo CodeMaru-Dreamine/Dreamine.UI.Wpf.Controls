@@ -37,7 +37,7 @@ namespace Dreamine.UI.Wpf.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DreamineTextBox),
                 new FrameworkPropertyMetadata(typeof(DreamineTextBox)));
 
-            var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineTextBoxStyle.xaml", UriKind.RelativeOrAbsolute);
+            var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineTextBoxStyle.xaml", UriKind.RelativeOrAbsolute);
 
             if (Application.Current != null)
             {

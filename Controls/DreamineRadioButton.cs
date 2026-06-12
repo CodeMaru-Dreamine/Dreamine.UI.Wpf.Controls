@@ -22,7 +22,7 @@ namespace Dreamine.UI.Wpf.Controls
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(DreamineRadioButton),
 				new FrameworkPropertyMetadata(typeof(DreamineRadioButton)));
 
-			var uri = new Uri("/VsLibrary;component/UiComponent/Styles/DreamineRadioButtonStyle.xaml", UriKind.RelativeOrAbsolute);
+			var uri = new Uri("/Dreamine.UI.Wpf.Themes;component/DreamineRadioButtonStyle.xaml", UriKind.RelativeOrAbsolute);
 
 			if (Application.Current != null)
 			{
