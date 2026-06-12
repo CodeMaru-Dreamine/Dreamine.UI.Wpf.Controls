@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:VsControls="clr-namespace:Dreamine.UI.Wpf.Controls"
     xmlns:converters="clr-namespace:Dreamine.UI.Wpf.Converters;assembly=Dreamine.UI.Wpf"
+    xmlns:conv="clr-namespace:Dreamine.UI.Wpf.Controls.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Dreamine.UI.Wpf.Controls.Navigation"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -24,9 +25,12 @@
             <!-- 또는 <StackPanel Orientation="Vertical"/> -->
         </ItemsPanelTemplate>
         <vsl:StaticLocalizationProxy x:Key="LangProxy" />
+        <conv:NullToUnsetConverter x:Key="NullToUnset" />
     </UserControl.Resources>
 
-    <ItemsControl d:ItemsSource="{d:DesignInstance Type=local:DesignButtonDatas, IsDesignTimeCreatable=True}" ItemsSource="{Binding ButtonDatas}">
+    <ItemsControl d:ItemsSource="{d:DesignInstance Type=local:DesignButtonDatas, IsDesignTimeCreatable=True}"
+                  ItemsSource="{Binding ButtonDatas, RelativeSource={RelativeSource AncestorType={x:Type local:DreamineNavigationBar}}}"
+                  x:Name="PART_ItemsControl">
         <ItemsControl.Style>
             <Style TargetType="ItemsControl">
                 <!--  기본 가로 배치  -->
@@ -55,7 +59,7 @@
                     Content="{Binding Content}"
                     Focusable="True"
                     FontWeight="{Binding FontWeight}"
-                    Foreground="{Binding Foreground}"
+                    Foreground="{Binding Foreground, Converter={StaticResource NullToUnset}}"
                     Grade="{Binding Grade}"
                     ImagePosition="{Binding ImagePosition}"
                     ImageSource="{Binding ImageSource}"

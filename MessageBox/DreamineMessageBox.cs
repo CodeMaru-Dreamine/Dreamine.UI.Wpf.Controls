@@ -76,7 +76,6 @@ namespace Dreamine.UI.Wpf.Controls.MessageBox
 		/// <returns>The active <see cref="Window"/>, or null if none is active.</returns>
 		private static Window? GetActiveWindow()
 		{
-			Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 			return Application.Current.Windows
 				.OfType<Window>()
 				.FirstOrDefault(w => w.IsActive);
