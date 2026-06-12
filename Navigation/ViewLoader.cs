@@ -104,12 +104,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 				else
 				{
 					// \brief Multi instance unique key
-					if (!ViewModelKeyCache.IndexMap.ContainsKey(typeName))
-					{
-						ViewModelKeyCache.IndexMap[typeName] = 0;
-					}
-
-					int typeIndex = ViewModelKeyCache.IndexMap[typeName]++;
+					long typeIndex = ViewModelKeyCache.GetOrIncrement(typeName);
 					uniqueKey = $"{typeName}_{typeIndex:D2}";
 
 					vmInstance = Activator.CreateInstance(viewModelType);
