@@ -1,4 +1,4 @@
-﻿using Microsoft.Xaml.Behaviors.Layout;
+using Microsoft.Xaml.Behaviors.Layout;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -97,8 +97,8 @@ namespace Dreamine.UI.Wpf.Controls
 
 		/// <summary> @brief 표시 코너 </summary>
 		public static readonly DependencyProperty CornerProperty =
-			DependencyProperty.Register(nameof(Corner), typeof(eLedCorner), typeof(DreamineCheckLed),
-				new PropertyMetadata(eLedCorner.TopRight));
+			DependencyProperty.Register(nameof(Corner), typeof(LedCorner), typeof(DreamineCheckLed),
+				new PropertyMetadata(LedCorner.TopRight));
 
 		/// <summary> @brief LED 지름(px) </summary>
 		public static readonly DependencyProperty DiameterProperty =
@@ -142,7 +142,7 @@ namespace Dreamine.UI.Wpf.Controls
 		/// <summary>Pulse 애니메이션 사용</summary>
 		public bool IsPulse { get => (bool)GetValue(IsPulseProperty); set => SetValue(IsPulseProperty, value); }
 		/// <summary>표시 코너</summary>
-		public eLedCorner Corner { get => (eLedCorner)GetValue(CornerProperty); set => SetValue(CornerProperty, value); }
+		public LedCorner Corner { get => (LedCorner)GetValue(CornerProperty); set => SetValue(CornerProperty, value); }
 		/// <summary>LED 지름(px)</summary>
 		public double Diameter { get => (double)GetValue(DiameterProperty); set => SetValue(DiameterProperty, value); }
 		/// <summary>가장자리 여백(px)</summary>
@@ -196,8 +196,8 @@ namespace Dreamine.UI.Wpf.Controls
 				new PropertyMetadata(false, OnAnyPropertyChanged));
 
 		public static readonly DependencyProperty CornerProperty =
-			DependencyProperty.RegisterAttached("Corner", typeof(eLedCorner), typeof(DreamineCheckLedAttach),
-				new PropertyMetadata(eLedCorner.TopRight, OnAnyPropertyChanged));
+			DependencyProperty.RegisterAttached("Corner", typeof(LedCorner), typeof(DreamineCheckLedAttach),
+				new PropertyMetadata(LedCorner.TopRight, OnAnyPropertyChanged));
 
 		public static readonly DependencyProperty DiameterProperty =
 			DependencyProperty.RegisterAttached("Diameter", typeof(double), typeof(DreamineCheckLedAttach),
@@ -242,8 +242,8 @@ namespace Dreamine.UI.Wpf.Controls
 		public static void SetIsPulse(DependencyObject o, bool v) => o.SetValue(IsPulseProperty, v);
 		public static bool GetIsPulse(DependencyObject o) => (bool)o.GetValue(IsPulseProperty);
 
-		public static void SetCorner(DependencyObject o, eLedCorner v) => o.SetValue(CornerProperty, v);
-		public static eLedCorner GetCorner(DependencyObject o) => (eLedCorner)o.GetValue(CornerProperty);
+		public static void SetCorner(DependencyObject o, LedCorner v) => o.SetValue(CornerProperty, v);
+		public static LedCorner GetCorner(DependencyObject o) => (LedCorner)o.GetValue(CornerProperty);
 
 		public static void SetDiameter(DependencyObject o, double v) => o.SetValue(DiameterProperty, v);
 		public static double GetDiameter(DependencyObject o) => (double)o.GetValue(DiameterProperty);

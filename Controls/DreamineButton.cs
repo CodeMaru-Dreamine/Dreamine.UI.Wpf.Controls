@@ -1,4 +1,4 @@
-﻿// \file DreamineButton.cs
+// \file DreamineButton.cs
 // \brief Custom button control for VsLibrary framework. Supports Icon/Shadow/Permission/AttachedCommand.
 
 using System;
@@ -16,46 +16,23 @@ using Dreamine.UI.Wpf.Controls.Navigation;
 
 namespace Dreamine.UI.Wpf.Controls
 {
+	/// <summary>Selection visual presentation mode for DreamineButton.</summary>
+	public enum SelectedVisualMode
+	{
+		BorderOnly = 0,
+		BackgroundOnly = 1,
+		Both = 2
+	}
+
+	/// <summary>Icon position for DreamineButton.</summary>
+	public enum IconPosition { Left, Right, Top, Bottom, Full }
+
 	/**
 	 * \class DreamineButton
 	 * \brief Custom button control for VsLibrary framework.
-	 *
-	 * \details
-	 * - Supports bitmap icons (ImageSource) and vector icons (IconPath)
-	 * - Auto-merges Style ResourceDictionary
-	 * - Trigger-based attached command execution (with reentrancy guard)
-	 * - Login/permission gating by Grade / MinimumGrade / OnceLogin
-	 * - Provides IconSize / IconMargin / IconStretch dependency properties
-	 * - Provides UseShadow / ShadowBlurRadius / ShadowOpacity / ShadowDepth / ShadowDirection / ShadowColor dependency properties
 	 */
 	public class DreamineButton : Button
 	{
-		/**
-		* \brief Selection visual presentation mode for DreamineButton.
-		*/
-		public enum eSelectedVisualMode
-		{
-			/**
-			 * \brief Change border only.
-			 */
-			BorderOnly = 0,
-
-			/**
-			 * \brief Change background overlay only.
-			 */
-			BackgroundOnly = 1,
-
-			/**
-			 * \brief Change both border and background.
-			 */
-			Both = 2
-		}
-
-		/**
-		 * \enum eIconPosition
-		 * \brief Icon position.
-		 */
-		public enum eIconPosition { Left, Right, Top, Bottom, Full }
 
 		#region Template parts
 
@@ -261,9 +238,9 @@ namespace Dreamine.UI.Wpf.Controls
 		/**
 		 * \brief Dependency property for selection visual presentation mode.
 		 */
-		public eSelectedVisualMode SelectedVisualMode
+		public SelectedVisualMode SelectedVisualMode
 		{
-			get => (eSelectedVisualMode)GetValue(SelectedVisualModeProperty);
+			get => (SelectedVisualMode)GetValue(SelectedVisualModeProperty);
 			set => SetValue(SelectedVisualModeProperty, value);
 		}
 
@@ -273,9 +250,9 @@ namespace Dreamine.UI.Wpf.Controls
 		public static readonly DependencyProperty SelectedVisualModeProperty =
 			DependencyProperty.Register(
 				nameof(SelectedVisualMode),
-				typeof(eSelectedVisualMode),
+				typeof(SelectedVisualMode),
 				typeof(DreamineButton),
-				new PropertyMetadata(eSelectedVisualMode.BorderOnly));
+				new PropertyMetadata(SelectedVisualMode.BorderOnly));
 
 		/**
 		 * \brief Selected border brush.
@@ -336,9 +313,9 @@ namespace Dreamine.UI.Wpf.Controls
 				new PropertyMetadata(new SolidColorBrush(Color.FromArgb(0x30, 0x00, 0x7A, 0xFF))));
 
 		/** \brief Icon layout position. */
-		public eIconPosition ImagePosition
+		public IconPosition ImagePosition
 		{
-			get => (eIconPosition)GetValue(ImagePositionProperty);
+			get => (IconPosition)GetValue(ImagePositionProperty);
 			set => SetValue(ImagePositionProperty, value);
 		}
 
@@ -346,10 +323,10 @@ namespace Dreamine.UI.Wpf.Controls
 		public static readonly DependencyProperty ImagePositionProperty =
 			DependencyProperty.Register(
 				nameof(ImagePosition),
-				typeof(eIconPosition),
+				typeof(IconPosition),
 				typeof(DreamineButton),
 				new FrameworkPropertyMetadata(
-					eIconPosition.Left,
+					IconPosition.Left,
 					FrameworkPropertyMetadataOptions.AffectsMeasure |
 					FrameworkPropertyMetadataOptions.AffectsArrange));
 

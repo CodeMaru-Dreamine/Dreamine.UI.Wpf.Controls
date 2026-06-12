@@ -1,4 +1,4 @@
-﻿using Dreamine.MVVM.ViewModels;
+using Dreamine.MVVM.ViewModels;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -288,9 +288,9 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		/// Identifies the <see cref="Language"/> dependency property,
 		/// which defines the language for button text and navigation UI.
 		/// </summary>
-		public new eLanguage Language
+		public new Language Language
 		{
-			get => (eLanguage)GetValue(LanguageProperty);
+			get => (Language)GetValue(LanguageProperty);
 			set => SetValue(LanguageProperty, value);
 		}
 
@@ -299,7 +299,7 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		/// Used for localizing button _content and other UI elements.
 		/// </summary>
 		public static readonly new DependencyProperty LanguageProperty =
-			DependencyProperty.Register(nameof(Language), typeof(eLanguage), typeof(DreamineNavigationBar), new PropertyMetadata(eLanguage.English));
+			DependencyProperty.Register(nameof(Language), typeof(Language), typeof(DreamineNavigationBar), new PropertyMetadata(Language.English));
 
 		/// <summary>
 		/// Gets or sets the list of navigation buttons to display in the bar.
@@ -359,9 +359,9 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		/// <summary>
 		/// Gets or sets the display position of the navigation bar (Top, Bottom, Left, or Right).
 		/// </summary>
-		public eNavigationBarPosition Position
+		public NavigationBarPosition Position
 		{
-			get => (eNavigationBarPosition)GetValue(PositionProperty);
+			get => (NavigationBarPosition)GetValue(PositionProperty);
 			set => SetValue(PositionProperty, value);
 		}
 
@@ -372,9 +372,9 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		public static readonly DependencyProperty PositionProperty =
 			DependencyProperty.Register(
 				nameof(Position),
-				typeof(eNavigationBarPosition),
+				typeof(NavigationBarPosition),
 				typeof(DreamineNavigationBar),
-				new PropertyMetadata(eNavigationBarPosition.Top, OnPositionChanged));
+				new PropertyMetadata(NavigationBarPosition.Top, OnPositionChanged));
 
 		/// <summary>
 		/// Called when the <see cref="Position"/> property changes.
@@ -394,14 +394,14 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		{
 			Thickness defaultMargin = Position switch
 			{
-				eNavigationBarPosition.Right => new Thickness(0, 0, 0, 4),
-				eNavigationBarPosition.Left => new Thickness(0, 0, 0, 4),
+				NavigationBarPosition.Right => new Thickness(0, 0, 0, 4),
+				NavigationBarPosition.Left => new Thickness(0, 0, 0, 4),
 				_ => new Thickness(0, 0, 4, 0)
 			};
 			Thickness lastMargin = Position switch
 			{
-				eNavigationBarPosition.Right => new Thickness(0, 0, 0, 4),
-				eNavigationBarPosition.Left => new Thickness(0, 0, 0, 4),
+				NavigationBarPosition.Right => new Thickness(0, 0, 0, 4),
+				NavigationBarPosition.Left => new Thickness(0, 0, 0, 4),
 				_ => new Thickness(0)
 			};
 
@@ -517,7 +517,7 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 	/// <summary>
 	/// Defines the layout direction of the navigation bar.
 	/// </summary>
-	public enum eNavigationBarPosition
+	public enum NavigationBarPosition
 	{
 		Top,
 		Bottom,
@@ -566,7 +566,7 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		private Brush _background = Brushes.DarkBlue;
 		public Brush Background { get => _background; set => SetProperty(ref _background, value); }
 
-		public DreamineButton.eIconPosition ImagePosition { get; set; } = DreamineButton.eIconPosition.Left;
+		public IconPosition ImagePosition { get; set; } = IconPosition.Left;
 
 		private bool _isEnabled = true;
 		public bool IsEnabled { get => _isEnabled; set => SetProperty(ref _isEnabled, value); }
@@ -622,7 +622,7 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 			bool isSelected = false,
 			bool isFocusable = true,
 			Visibility visibility = Visibility.Visible,
-			DreamineButton.eIconPosition imagePosition = DreamineButton.eIconPosition.Top)
+			IconPosition imagePosition = IconPosition.Top)
 		{
 			return new ButtonData
 			{

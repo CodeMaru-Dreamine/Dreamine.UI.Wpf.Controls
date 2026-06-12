@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -115,9 +115,9 @@ namespace Dreamine.UI.Wpf.Controls
 		/// <summary>
 		/// Gets or sets the position of the expand arrow icon (Left or Right).
 		/// </summary>
-		public eExpanderArrowPlacement ArrowPlacement
+		public ExpanderArrowPlacement ArrowPlacement
 		{
-			get => (eExpanderArrowPlacement)GetValue(ArrowPlacementProperty);
+			get => (ExpanderArrowPlacement)GetValue(ArrowPlacementProperty);
 			set => SetValue(ArrowPlacementProperty, value);
 		}
 
@@ -125,8 +125,8 @@ namespace Dreamine.UI.Wpf.Controls
 		/// Identifies the ArrowPlacement dependency property.
 		/// </summary>
 		public static readonly DependencyProperty ArrowPlacementProperty =
-			DependencyProperty.Register(nameof(ArrowPlacement), typeof(eExpanderArrowPlacement), typeof(DreamineExpander),
-				new PropertyMetadata(eExpanderArrowPlacement.Left));
+			DependencyProperty.Register(nameof(ArrowPlacement), typeof(ExpanderArrowPlacement), typeof(DreamineExpander),
+				new PropertyMetadata(ExpanderArrowPlacement.Left));
 
 		/// <summary>
 		/// Gets or sets the font size used in the header.
@@ -191,10 +191,10 @@ namespace Dreamine.UI.Wpf.Controls
 	}
 
 	/// <summary>
-	/// \enum eExpanderArrowPlacement
+	/// \enum ExpanderArrowPlacement
 	/// \brief Defines the alignment of the expand/collapse arrow icon in the <see cref="DreamineExpander"/>.
 	/// </summary>
-	public enum eExpanderArrowPlacement
+	public enum ExpanderArrowPlacement
 	{
 		/// <summary>
 		/// Arrow is displayed on the Left side of the header.
