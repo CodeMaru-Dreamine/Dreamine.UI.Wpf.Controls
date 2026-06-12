@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Dreamine.UI.Wpf.Controls.MessageBox
@@ -13,6 +14,8 @@ namespace Dreamine.UI.Wpf.Controls.MessageBox
 		/// Gets the result selected by the user.
 		/// </summary>
 		public MessageBoxResult Result { get; private set; } = MessageBoxResult.None;
+
+		private readonly CancellationTokenSource _cts = new();
 
 		/// <summary>
 		/// Initializes a new Instance of the <see cref="DreamineMessageBoxWindow"/> class.
@@ -36,10 +39,17 @@ namespace Dreamine.UI.Wpf.Controls.MessageBox
 			SetupButtons(buttons);
 
 			if (enableDelaySeconds > 0)
-				DisableButtonsAndEnableLater(enableDelaySeconds);
+				_ = DisableButtonsAndEnableLaterAsync(enableDelaySeconds, _cts.Token);
 
 			if (autoClickTarget != MessageBoxResult.None && autoClickDelaySeconds > 0)
-				StartAutoClick(autoClickTarget, autoClickDelaySeconds);
+				_ = StartAutoClickAsync(autoClickTarget, autoClickDelaySeconds, _cts.Token);
+		}
+
+		protected override void OnClosed(EventArgs e)
+		{
+			_cts.Cancel();
+			_cts.Dispose();
+			base.OnClosed(e);
 		}
 
 		/// <summary>
@@ -47,7 +57,7 @@ namespace Dreamine.UI.Wpf.Controls.MessageBox
 		/// Also updates the button text with countdown seconds.
 		/// </summary>
 		/// <Param name="delaySeconds">Time in seconds to disable the buttons.</Param>
-		private async void DisableButtonsAndEnableLater(int delaySeconds)
+		private async Task DisableButtonsAndEnableLaterAsync(int delaySeconds, CancellationToken ct = default)
 		{
 			var buttons = new[] { BtnOk, BtnYes, BtnNo, BtnCancel };
 
@@ -59,10 +69,13 @@ namespace Dreamine.UI.Wpf.Controls.MessageBox
 
 			for (int i = delaySeconds; i > 0; i--)
 			{
+				if (ct.IsCancellationRequested) return;
+
 				foreach (var btn in buttons.Where(b => b.Visibility == Visibility.Visible))
 					btn.Content = $"{originalTexts[btn]} ({i})";
 
-				await Task.Delay(1000);
+				try { await Task.Delay(1000, ct); }
+				catch (OperationCanceledException) { return; }
 			}
 
 			foreach (var btn in buttons)
@@ -80,7 +93,7 @@ namespace Dreamine.UI.Wpf.Controls.MessageBox
 		/// </summary>
 		/// <Param name="target">The button result to trigger automatically.</Param>
 		/// <Param name="delaySeconds">Time in seconds before auto-click.</Param>
-		private async void StartAutoClick(MessageBoxResult target, int delaySeconds)
+		private async Task StartAutoClickAsync(MessageBoxResult target, int delaySeconds, CancellationToken ct = default)
 		{
 			var button = GetTargetButton(target);
 			if (button == null) return;
@@ -89,10 +102,15 @@ namespace Dreamine.UI.Wpf.Controls.MessageBox
 
 			for (int i = delaySeconds; i > 0; i--)
 			{
+				if (ct.IsCancellationRequested) return;
+
 				button.Content = $"{originalText} ({i})";
-				await Task.Delay(1000);
+
+				try { await Task.Delay(1000, ct); }
+				catch (OperationCanceledException) { return; }
 			}
 
+			if (ct.IsCancellationRequested) return;
 			button.Content = originalText;
 
 			switch (target)

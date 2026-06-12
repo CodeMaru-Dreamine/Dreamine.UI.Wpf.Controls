@@ -1,5 +1,6 @@
 using Dreamine.MVVM.ViewModels;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -105,7 +106,7 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 		/// Tracks whether global input hook has already been registered.
 		/// Prevents multiple event subscriptions.
 		/// </summary>
-		private static bool _isInputHooked = false;
+		private static volatile bool _isInputHooked = false;
 
 		/// <summary>
 		/// Registers a global input hook for mouse, keyboard, and touch input.
@@ -282,6 +283,14 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 			EnsureGlobalInputHook();
 			_instances.Add(this);
 			Unloaded += (_, _) => _instances.Remove(this);
+
+			// Window.Closed 보장: Unloaded가 발생하지 않을 때도 GC 루트 제거
+			Loaded += (_, _) =>
+			{
+				var parentWindow = Window.GetWindow(this);
+				if (parentWindow != null)
+					parentWindow.Closed += (_, _) => _instances.Remove(this);
+			};
 		}
 
 		/// <summary>
@@ -547,7 +556,7 @@ namespace Dreamine.UI.Wpf.Controls.Navigation
 			{
 				if (string.IsNullOrWhiteSpace(ImagePath)) return null!;
 				try { return new BitmapImage(new Uri(ImagePath, UriKind.RelativeOrAbsolute)); }
-				catch { return null!; }
+				catch (Exception ex) { Debug.WriteLine($"[ButtonData] ImageSource 로드 실패({ImagePath}): {ex.Message}"); return null!; }
 			}
 		}
 

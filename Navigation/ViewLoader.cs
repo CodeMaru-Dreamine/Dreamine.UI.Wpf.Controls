@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -27,12 +28,12 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 			/// @brief 호환성을 위한 UserControl 래퍼. 임베드가 필요한 경우 이 컨트롤을 사용하세요.
 			/// @details 원 뷰가 UserControl이면 그대로, 아니면 내부에 래핑된 요소가 들어갑니다.
 			/// </summary>
-			public UserControl View { get; set; } = null!;
+			public UserControl? View { get; set; }
 
 			/// <summary>
 			/// @brief 원본/최종 임베드 가능한 뷰 요소(프레임/컨텐츠호스트 포함).
 			/// </summary>
-			public FrameworkElement FrameworkView { get; set; } = null!;
+			public FrameworkElement? FrameworkView { get; set; }
 
 			/// <summary>
 			/// @brief Resolve된 ViewModel 타입(없으면 null).
@@ -507,7 +508,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 				if (a.IsDynamic) continue;
 				IEnumerable<T>? res = null;
 				try { res = selector(a); }
-				catch { /* skip */ }
+				catch (Exception ex) { Debug.WriteLine($"[ViewLoader] Assembly scan 실패 ({a.FullName}): {ex.Message}"); }
 				if (res != null) foreach (var x in res) yield return x;
 			}
 		}

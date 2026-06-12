@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -19,13 +20,13 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		/// <summary>고정 높이. null이면 미지정.</summary>
 		public double Height { get; set; } = 600;
 
-		public static PopupWindowManager Instance { get; set; } = new();
+		public static PopupWindowManager Instance { get; } = new();
 		private readonly Dictionary<string, Window> _popupWindows = new();
 
-		public void SetPopupSize(string name, double whidth, double height)
+		public void SetPopupSize(string name, double width, double height)
 		{
-			Instance.Windows[name].Width = whidth;
-			Instance.Windows[name].Height = height;
+			_popupWindows[name].Width = width;
+			_popupWindows[name].Height = height;
 		}
 
 		/// <summary>
@@ -37,19 +38,21 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		/// Creates and registers a new popup window with the specified view and ViewModel.
 		/// </summary>
 		/// <Param name="name">The unique identifier for the popup window.</Param>
-		/// <Param name="view">The <see cref="FrameworkElement"/> to display in the popup.</Param>
-		/// <Param name="viewModel">The ViewModel to bind to the view.</Param>
-		public void CreatePopup(string name, LoadedViewInfo loadedViewInfo)
+		/// <Param name="loadedViewInfo">View/ViewModel info to display in the popup.</Param>
+		/// <Param name="popupWidth">Optional explicit width. Uses <see cref="Width"/> default if not provided.</Param>
+		/// <Param name="popupHeight">Optional explicit height. Uses <see cref="Height"/> default if not provided.</Param>
+		/// <Param name="centerOnScreen">If true, centers the popup on screen rather than on the owner window.</Param>
+		public void CreatePopup(string name, LoadedViewInfo loadedViewInfo, double? popupWidth = null, double? popupHeight = null, bool centerOnScreen = false)
 		{
-			FrameworkElement view = loadedViewInfo.View == null
+			FrameworkElement view = (loadedViewInfo.View == null
 				? loadedViewInfo.FrameworkView
-				: loadedViewInfo.View;
+				: loadedViewInfo.View)!;
 
-			object viewModel = view.DataContext;
+			object viewModel = view?.DataContext!;
 
 			if (!Application.Current.Dispatcher.CheckAccess())
 			{
-				Application.Current.Dispatcher.Invoke(() => CreatePopup(name, loadedViewInfo));
+				Application.Current.Dispatcher.Invoke(() => CreatePopup(name, loadedViewInfo, popupWidth, popupHeight, centerOnScreen));
 				return;
 			}
 
@@ -97,26 +100,11 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 			}
 
 			// 크기 조정
-			if (name.Contains("LoginAsync"))
-			{
-				popup.Width = 340;
-				popup.Height = 400;
-			}
-			else if (name == "VsAlarmEdit")
-			{
-				popup.Width = 1024;
-				popup.Height = 768;
-			}
-			else if (name.Contains("Alarm"))
-			{
-				popup.Width = 960;
-				popup.Height = 600;
-			}
-			else
-			{
-				popup.Width = Width;
-				popup.Height = Height;
-			}
+			popup.Width = popupWidth ?? Width;
+			popup.Height = popupHeight ?? Height;
+
+			// centerOnScreen 플래그를 Tag에 저장해 이후 핸들러에서 참조
+			popup.Tag = centerOnScreen;
 
 			// 최초 Owner + 위치 설정 (여기서만 Owner를 건드림)
 			if (owner != null && owner.IsLoaded && owner.IsVisible)
@@ -125,23 +113,12 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 				{
 					popup.Owner = owner;
 				}
-				catch
+				catch (Exception ex)
 				{
-					// Owner 설정 실패 시 그냥 최상위 윈도우로 둠
+					Debug.WriteLine($"[Popup] Owner 설정 실패({name}): {ex.Message}");
 				}
 
-				if (name == "VsAlarmEdit")
-				{
-					var screenWidth = SystemParameters.PrimaryScreenWidth;
-					var screenHeight = SystemParameters.PrimaryScreenHeight;
-					popup.Left = (screenWidth - popup.Width) / 2;
-					popup.Top = (screenHeight - popup.Height) / 2;
-				}
-				else
-				{
-					popup.Left = owner.Left + (owner.Width - popup.Width) / 2;
-					popup.Top = owner.Top + (owner.Height - popup.Height) / 2;
-				}
+				SetPopupPosition(popup, owner);
 			}
 			else
 			{
@@ -165,23 +142,16 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 					{
 						popup.Owner = owner;
 					}
-					catch { }
+					catch (Exception ex)
+					{
+						Debug.WriteLine($"[Popup] ContentRendered Owner 설정 실패({name}): {ex.Message}");
+					}
 
-					if (name == "VsAlarmEdit")
-					{
-						var screenWidth = SystemParameters.PrimaryScreenWidth;
-						var screenHeight = SystemParameters.PrimaryScreenHeight;
-						popup.Left = (screenWidth - popup.Width) / 2;
-						popup.Top = (screenHeight - popup.Height) / 2;
-					}
-					else
-					{
-						popup.Left = owner.Left + (owner.Width - popup.Width) / 2;
-						popup.Top = owner.Top + (owner.Height - popup.Height) / 2;
-					}
+					SetPopupPosition(popup, owner);
 				}
 
 				owner.ContentRendered += OnOwnerReady;
+				popup.Closed += (_, _) => owner.ContentRendered -= OnOwnerReady;
 			}
 
 			popup.Loaded += (s, e) => popup.Hide();
@@ -194,18 +164,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 				if (!popup.IsVisible)
 					return;
 
-				if (name == "VsAlarmEdit")
-				{
-					var screenWidth = SystemParameters.PrimaryScreenWidth;
-					var screenHeight = SystemParameters.PrimaryScreenHeight;
-					popup.Left = (screenWidth - popup.Width) / 2;
-					popup.Top = (screenHeight - popup.Height) / 2;
-				}
-				else if (owner != null && owner.IsLoaded && owner.IsVisible)
-				{
-					popup.Left = owner.Left + (owner.Width - popup.Width) / 2;
-					popup.Top = owner.Top + (owner.Height - popup.Height) / 2;
-				}
+				SetPopupPosition(popup, owner);
 			};
 
 			// 앱 종료 중이면 그냥 닫고, 평소엔 Hide 재사용
@@ -225,24 +184,30 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 				}
 
 				// 정상 동작 중에는 닫지 않고 숨김
-				if (name == "VsAlarmEdit")
-				{
-					var screenWidth = SystemParameters.PrimaryScreenWidth;
-					var screenHeight = SystemParameters.PrimaryScreenHeight;
-					popup.Left = (screenWidth - popup.Width) / 2;
-					popup.Top = (screenHeight - popup.Height) / 2;
-				}
-				else if (owner != null && owner.IsVisible)
-				{
-					popup.Left = owner.Left + (owner.Width - popup.Width) / 2;
-					popup.Top = owner.Top + (owner.Height - popup.Height) / 2;
-				}
-
+				SetPopupPosition(popup, owner);
 				popup.Hide();
 				e.Cancel = true;
 			};
 
 			_popupWindows[name] = popup;
+		}
+
+		private static void SetPopupPosition(Window popup, Window? owner)
+		{
+			bool centerOnScreen = popup.Tag is true;
+
+			if (centerOnScreen)
+			{
+				var screenWidth = SystemParameters.PrimaryScreenWidth;
+				var screenHeight = SystemParameters.PrimaryScreenHeight;
+				popup.Left = (screenWidth - popup.Width) / 2;
+				popup.Top = (screenHeight - popup.Height) / 2;
+			}
+			else if (owner != null && owner.IsLoaded && owner.IsVisible)
+			{
+				popup.Left = owner.Left + (owner.Width - popup.Width) / 2;
+				popup.Top = owner.Top + (owner.Height - popup.Height) / 2;
+			}
 		}
 
 		/// <summary>
