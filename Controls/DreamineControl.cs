@@ -623,13 +623,17 @@ namespace Dreamine.UI.Wpf.Controls
                     continue;
                 }
 
+                if (result.View is null)
+                {
+                    continue;
+                }
+
                 _views[name] = result.View;
                 _order.Add(name);
 
                 // \brief Visibility hook attach (dedupe)
                 result.View.IsVisibleChanged -= OnRootIsVisibleChanged;
                 result.View.IsVisibleChanged += OnRootIsVisibleChanged;
-
 
                 _containerGrid.Children.Add(result.View);
 

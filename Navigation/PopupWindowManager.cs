@@ -130,7 +130,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 			{
 				void OnOwnerReady(object? s, EventArgs e)
 				{
-					owner.ContentRendered -= OnOwnerReady;
+					owner!.ContentRendered -= OnOwnerReady;
 
 					if (!popup.IsVisible)
 						return;
@@ -151,7 +151,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 				}
 
 				owner.ContentRendered += OnOwnerReady;
-				popup.Closed += (_, _) => owner.ContentRendered -= OnOwnerReady;
+				popup.Closed += (_, _) => owner!.ContentRendered -= OnOwnerReady;
 			}
 
 			popup.Loaded += (s, e) => popup.Hide();
