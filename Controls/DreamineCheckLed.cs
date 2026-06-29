@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace Dreamine.UI.Wpf.Controls
 {
@@ -88,12 +89,39 @@ namespace Dreamine.UI.Wpf.Controls
 		/// <summary> @brief LED On/Off 상태 </summary>
 		public static readonly DependencyProperty IsOnProperty =
 			DependencyProperty.Register(nameof(IsOn), typeof(bool), typeof(DreamineCheckLed),
-				new PropertyMetadata(false));
+				new PropertyMetadata(false, OnPulseStateChanged));
 
 		/// <summary> @brief LED가 숨쉬기(pulse) 애니메이션을 수행할지 여부 </summary>
 		public static readonly DependencyProperty IsPulseProperty =
 			DependencyProperty.Register(nameof(IsPulse), typeof(bool), typeof(DreamineCheckLed),
-				new PropertyMetadata(false));
+				new PropertyMetadata(false, OnPulseStateChanged));
+
+		/// <summary>
+		/// @brief IsOn/IsPulse가 모두 true일 때 컨트롤 자체의 Opacity를 직접 애니메이션합니다.
+		/// @details 템플릿의 트리거/스토리보드에 의존하지 않으므로, 테마/템플릿이 교체되어도 항상 동작합니다.
+		/// </summary>
+		private static void OnPulseStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (d is not DreamineCheckLed led) return;
+
+			if (led.IsOn && led.IsPulse)
+			{
+				var pulse = new DoubleAnimation
+				{
+					From = 0.15,
+					To = 1.0,
+					Duration = TimeSpan.FromSeconds(0.4),
+					AutoReverse = true,
+					RepeatBehavior = RepeatBehavior.Forever
+				};
+				led.BeginAnimation(OpacityProperty, pulse);
+			}
+			else
+			{
+				led.BeginAnimation(OpacityProperty, null);
+				led.Opacity = 1.0;
+			}
+		}
 
 		/// <summary> @brief 표시 코너 </summary>
 		public static readonly DependencyProperty CornerProperty =

@@ -156,6 +156,20 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		/// \param viewType Resolved view type (can be null).
 		/// \return ViewModel type or null.
 		/// </summary>
+		/// <summary>
+		/// \brief Strips a trailing "View" suffix from a type name so that "PopupView" → "Popup"
+		/// instead of naively appending "ViewModel" and producing "PopupViewViewModel".
+		/// \details Most consumers name their View/ViewModel pairs as "{Name}View"/"{Name}ViewModel"
+		/// (e.g. CounterView/CounterViewModel), not "{Name}View" + "ViewModel" literal concatenation.
+		/// </summary>
+		private static string StripViewSuffix(string name)
+		{
+			const string suffix = "View";
+			if (name.Length > suffix.Length && name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+				return name[..^suffix.Length];
+			return name;
+		}
+
 		private static Type? ResolveViewModelType_Strict(string actualTypeName, Type? viewType)
 		{
 			// \brief Candidate full names
@@ -163,17 +177,22 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 
 			// \brief Common: same namespace + ViewModel suffix
 			candidates.Add(actualTypeName + "ViewModel");
+			candidates.Add(StripViewSuffix(actualTypeName) + "ViewModel");
 
 			// \brief Pages -> ViewModels convention
 			if (actualTypeName.Contains(".Pages.", StringComparison.OrdinalIgnoreCase))
 			{
-				candidates.Add(actualTypeName.Replace(".Pages.", ".ViewModels.", StringComparison.OrdinalIgnoreCase) + "ViewModel");
+				var pagesToVm = actualTypeName.Replace(".Pages.", ".ViewModels.", StringComparison.OrdinalIgnoreCase);
+				candidates.Add(pagesToVm + "ViewModel");
+				candidates.Add(StripViewSuffix(pagesToVm) + "ViewModel");
 			}
 
 			// \brief Views -> ViewModels convention (optional, but common)
 			if (actualTypeName.Contains(".Views.", StringComparison.OrdinalIgnoreCase))
 			{
-				candidates.Add(actualTypeName.Replace(".Views.", ".ViewModels.", StringComparison.OrdinalIgnoreCase) + "ViewModel");
+				var viewsToVm = actualTypeName.Replace(".Views.", ".ViewModels.", StringComparison.OrdinalIgnoreCase);
+				candidates.Add(viewsToVm + "ViewModel");
+				candidates.Add(StripViewSuffix(viewsToVm) + "ViewModel");
 			}
 
 			// \brief If viewType is known, add "Namespace.ViewModels.{ViewName}ViewModel"
@@ -181,14 +200,26 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 			{
 				string viewNs = viewType.Namespace ?? string.Empty;
 				string viewName = viewType.Name;
+				string viewNameNoSuffix = StripViewSuffix(viewName);
 				if (!string.IsNullOrWhiteSpace(viewNs))
 				{
 					candidates.Add($"{viewNs}.ViewModels.{viewName}ViewModel");
+					candidates.Add($"{viewNs}.ViewModels.{viewNameNoSuffix}ViewModel");
 					candidates.Add($"{viewNs}.{viewName}ViewModel");
+					candidates.Add($"{viewNs}.{viewNameNoSuffix}ViewModel");
+
+					// \brief Sibling "Views" -> "ViewModels" namespace swap
+					if (viewNs.Contains(".Views", StringComparison.OrdinalIgnoreCase))
+					{
+						string swappedNs = viewNs.Replace(".Views", ".ViewModels", StringComparison.OrdinalIgnoreCase);
+						candidates.Add($"{swappedNs}.{viewName}ViewModel");
+						candidates.Add($"{swappedNs}.{viewNameNoSuffix}ViewModel");
+					}
 				}
 
-				// \brief Short name candidate
+				// \brief Short name candidates
 				candidates.Add(viewName + "ViewModel");
+				candidates.Add(viewNameNoSuffix + "ViewModel");
 			}
 
 			// \brief De-duplicate

@@ -90,7 +90,11 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 					WindowStartupLocation = WindowStartupLocation.CenterOwner,
 					WindowStyle = WindowStyle.None,
 					ResizeMode = ResizeMode.NoResize,
-					AllowsTransparency = true,
+					// AllowsTransparency=true는 Background가 완전 불투명(White)이라 시각적으로
+					// 필요 없고, 레이어드 윈도우(WS_EX_LAYERED)로 만들어져 일부 환경(원격 데스크톱/
+					// 가상 머신/특정 GPU 드라이버)에서 마우스 입력이 전달되지 않는 문제를 유발할 수
+					// 있어 제거했다.
+					ShowActivated = true,
 					Background = Brushes.White,
 					Width = desired.Width,
 					Height = desired.Height,
