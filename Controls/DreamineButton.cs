@@ -599,46 +599,28 @@ namespace Dreamine.UI.Wpf.Controls
 
 			var command = GetCommand(d);
 
-			/// <summary>
-			/// \brief Resolve command parameter with a clear priority.
-			/// \details
-			/// Priority:
-			/// 1) DreamineButton attached CommandParameter (DreamineButton.GetCommandParameter)
-			/// 2) WPF ButtonBase.CommandParameter (standard DP)
-			/// 3) RoutedEventArgs (fallback only when no parameter is supplied)
-			/// </details>
-			/// </summary>
+			// Resolve command parameter with a clear priority:
+			// 1) DreamineButton attached CommandParameter.
+			// 2) WPF ButtonBase.CommandParameter.
+			// 3) RoutedEventArgs fallback.
 			object? parameter = null;
 
-			/// <summary>
-			/// \brief 1) Attached CommandParameter (DreamineButton)
-			/// \details If the attached property is not set, it returns null.
-			/// </summary>
+			// 1) Attached CommandParameter (DreamineButton).
 			parameter = GetCommandParameter(d);
 
-			/// <summary>
-			/// \brief 2) Standard WPF CommandParameter (ButtonBase)
-			/// \details Supports XAML usage: CommandParameter="..."
-			/// </summary>
+			// 2) Standard WPF CommandParameter (ButtonBase).
 			if (parameter == null && d is ButtonBase bbForParam)
 				parameter = bbForParam.CommandParameter;
 
-			/// <summary>
-			/// \brief 3) Fallback to event args
-			/// \details When no parameter is supplied, pass event args to allow advanced trigger scenarios.
-			/// </summary>
+			// 3) Fallback to event args.
 			if (parameter == null)
 				parameter = eventArgs;
 
-			/// <summary>
-			/// Prevent double invocation when ButtonBase.Command is already wired to the same ICommand.
-			/// </summary>
+			// Prevent double invocation when ButtonBase.Command is already wired to the same ICommand.
 			if (d is ButtonBase bb && command != null && ReferenceEquals(bb.Command, command))
 				return;
 
-			/// <summary>
-			/// Re-entrancy guard.
-			/// </summary>
+			// Re-entrancy guard.
 			if (GetIsExecuting(d))
 				return;
 
@@ -665,9 +647,7 @@ namespace Dreamine.UI.Wpf.Controls
 				if (command == null)
 					return;
 
-				/// <summary>
-				/// Execute async command or sync command depending on the ICommand type.
-				/// </summary>
+				// Execute the command when the parameter is accepted.
 				if (command.CanExecute(parameter))
 				{
 					command.Execute(parameter);

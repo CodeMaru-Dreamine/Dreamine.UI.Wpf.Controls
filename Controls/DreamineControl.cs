@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // \file DreamineTabHost.SingleFile.cs
 // \brief DreamineTabHost + DreamineTabHostItem (single-file copy/paste version)
 // \details
@@ -34,12 +34,12 @@ namespace Dreamine.UI.Wpf.Controls
     /// <summary>
     /// \class DreamineTabHost
     /// \brief Content control that dynamically loads and switches views by string keys.
-    /// \details
+    /// Details:
     ///  - IMPORTANT: XAML children are mapped to <see cref="Items"/> (NOT Content) via <see cref="ContentPropertyAttribute"/>.
     ///  - This enables:
     ///      <DreamineTabHost>
-    ///          <DreamineTabHostItem Content="A"/>
-    ///          <DreamineTabHostItem Content="B"/>
+    ///          &lt;DreamineTabHostItem Content="A"/&gt;
+    ///          &lt;DreamineTabHostItem Content="B"/&gt;
     ///      </DreamineTabHost>
     ///  - Views can be declared by:
     ///    1) XAML children (<see cref="Items"/>)
@@ -50,17 +50,16 @@ namespace Dreamine.UI.Wpf.Controls
     ///  - Design-time:
     ///    - No DI / RegionManager / PopupService usage.
     ///    - Views created by Activator and can auto-wire design VM.
-    /// </details>
     /// </summary>
     [ContentProperty(nameof(Items))]
     public class DreamineTabHost : ContentControl
     {
         /// <summary>
         /// \brief XAML child items collection.
-        /// \details
-        ///  - XAML children <DreamineTabHostItem .../> are added here automatically.
+        /// Details:
+        ///  - XAML children &lt;DreamineTabHostItem .../&gt; are added here automatically.
         ///  - This is NOT a DependencyProperty intentionally (to keep parsing simple and stable).
-        /// </details>
+        /// </summary>
         public ObservableCollection<DreamineTabHostItem> Items { get; } = new ObservableCollection<DreamineTabHostItem>();
 
         /// <summary>
@@ -184,9 +183,8 @@ namespace Dreamine.UI.Wpf.Controls
 
         /// <summary>
         /// \brief Logical list of view names or type names.
-        /// \details
+        /// Details:
         ///  - Can contain short type names or fully qualified type names.
-        /// </details>
         /// </summary>
         public ObservableCollection<string> ContentList
         {
@@ -1053,12 +1051,11 @@ namespace Dreamine.UI.Wpf.Controls
     /// <summary>
     /// \class DreamineTabHostItem
     /// \brief Logical item used inside DreamineTabHost to declare a view/popup entry.
-    /// \details
+    /// Details:
     ///  - Content: default raw type/name string.
     ///  - Key: optional logical key override (if empty, derived from Type/Content).
     ///  - Type: optional concrete type name override (if empty, Content is used).
     ///  - Popup: if true, forces "*_Popup" semantics.
-    /// </details>
     /// </summary>
     public class DreamineTabHostItem : ContentControl
     {

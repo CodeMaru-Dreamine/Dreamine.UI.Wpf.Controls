@@ -57,6 +57,7 @@ namespace Dreamine.UI.Wpf.Controls.MessageBox
 		/// Also updates the button text with countdown seconds.
 		/// </summary>
 		/// <Param name="delaySeconds">Time in seconds to disable the buttons.</Param>
+		/// <Param name="ct">Cancellation token used when the window closes.</Param>
 		private async Task DisableButtonsAndEnableLaterAsync(int delaySeconds, CancellationToken ct = default)
 		{
 			var buttons = new[] { BtnOk, BtnYes, BtnNo, BtnCancel };
@@ -93,6 +94,7 @@ namespace Dreamine.UI.Wpf.Controls.MessageBox
 		/// </summary>
 		/// <Param name="target">The button result to trigger automatically.</Param>
 		/// <Param name="delaySeconds">Time in seconds before auto-click.</Param>
+		/// <Param name="ct">Cancellation token used when the window closes.</Param>
 		private async Task StartAutoClickAsync(MessageBoxResult target, int delaySeconds, CancellationToken ct = default)
 		{
 			var button = GetTargetButton(target);

@@ -1,4 +1,4 @@
-﻿// \file DreamineLabel.cs
+// \file DreamineLabel.cs
 // \brief Custom Label control used in VsLibrary.
 // \details
 // - Auto style merge (DreamineLabelStyle.xaml).
@@ -17,19 +17,17 @@ namespace Dreamine.UI.Wpf.Controls
 	/// <summary>
 	/// \class DreamineLabel
 	/// \brief Custom Label control used in VsLibrary.
-	/// \details
+	/// Details:
 	/// - Auto merges style resource dictionary.
 	/// - Supports attached command execution via trigger names (comma-separated).
-	/// </details>
 	/// </summary>
 	public class DreamineLabel : Label
 	{
 		/// <summary>
 		/// \brief Static constructor.
-		/// \details
+		/// Details:
 		/// - Overrides default style key.
 		/// - Automatically merges DreamineLabelStyle.xaml into application resources.
-		/// </details>
 		/// </summary>
 		static DreamineLabel()
 		{

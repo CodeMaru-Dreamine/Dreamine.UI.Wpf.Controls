@@ -44,11 +44,11 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		/// <Param name="centerOnScreen">If true, centers the popup on screen rather than on the owner window.</Param>
 		public void CreatePopup(string name, LoadedViewInfo loadedViewInfo, double? popupWidth = null, double? popupHeight = null, bool centerOnScreen = false)
 		{
-			FrameworkElement view = (loadedViewInfo.View == null
-				? loadedViewInfo.FrameworkView
-				: loadedViewInfo.View)!;
+			FrameworkElement view = loadedViewInfo.View
+				?? loadedViewInfo.FrameworkView
+				?? throw new InvalidOperationException($"Popup view '{name}' could not be created.");
 
-			object viewModel = view?.DataContext!;
+			object? viewModel = view.DataContext;
 
 			if (!Application.Current.Dispatcher.CheckAccess())
 			{

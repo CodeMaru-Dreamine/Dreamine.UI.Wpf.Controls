@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -59,7 +59,6 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		///      (Page를 UserControl/ContentControl에 직접 넣으면 WPF 규칙 위반으로 예외 발생)
 		///    - ViewModel이 없어도 View는 생성하여 화면이 표시되도록 합니다.
 		///    - Page는 Frame으로 감싸서 반환되므로, 어디에 embed 하더라도 안정적으로 동작합니다.
-		/// </details>
 		/// @Param typeName View의 풀네임(끝이 "_Popup"이면 팝업 플래그 처리)
 		/// @Param useSingletonView ViewModel을 싱글톤으로 resolve할지 여부
 		/// @returns 뷰 인스턴스/뷰모델 메타 정보
@@ -149,7 +148,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 
 		/// <summary>
 		/// \brief Resolves a ViewModel type with strict rules to avoid selecting View types as ViewModel.
-		/// \details
+		/// Details:
 		///  - Candidates ALWAYS end with "ViewModel".
 		///  - Candidates are filtered to types assignable to ViewModelBase (or at least not FrameworkElement).
 		/// \param actualTypeName Actual view type name without "_Popup".
@@ -275,7 +274,6 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		/// - FrameworkElement → 그대로
 		/// - null/실패 → 간단한 안내 UserControl 반환
 		/// - <paramref name="resetDataContext"/> 가 true일 때만 DataContext를 초기화합니다.
-		/// </details>
 		/// <Param name="viewType">생성할 View 타입.</Param>
 		/// <Param name="typeName">디버깅용 타입 이름.</Param>
 		/// <Param name="resetDataContext">
@@ -283,6 +281,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		///  - false : 기존 DataContext(부모 상속, AutoWireDesignViewModel 등)를 유지합니다.
 		/// </Param>
 		/// <returns>임베드 가능한 <see cref="FrameworkElement"/> 인스턴스.</returns>
+		/// </summary>
 		private static FrameworkElement ResolveFrameworkElement(Type? viewType, string typeName, bool resetDataContext) 
 		{
 			if (viewType == null || viewType.IsAbstract)
@@ -419,9 +418,9 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		///   - 기존 DataContext 유무와 관계없이 지정된 ViewModel로 덮어씁니다.
 		///   - Frame은 Navigation 컨테이너 특성상 즉시 Content가 없을 수 있으므로
 		///     Navigated/Loaded 타이밍을 모두 커버합니다.
-		/// </details>
 		/// <Param name="root">DataContext를 주입할 루트 요소.</Param>
 		/// <Param name="vm">ViewModel 인스턴스.</Param>
+		/// </summary>
 		private static void ApplyDataContext(FrameworkElement root, object vm)
 		{
 			if (root == null || vm == null)

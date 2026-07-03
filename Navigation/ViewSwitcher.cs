@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +14,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 	/// - Operates only in singleton _mode (<c>_useSingleton == true</c>).
 	/// - Can activate a popup window or toggle visibility among registered singleton views.
 	/// - <see cref="IsPopupName(string)"/> allows O(1) check if a name is registered as a popup.
-	/// </details>
+	/// </summary>
 	public class ViewSwitcher
 	{
 		private readonly IReadOnlyDictionary<string, Window> _popupWindows;
@@ -58,12 +58,12 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		/// - No-op if not in singleton _mode.
 		/// - If <paramref name="viewName"/> is a popup, shows and activates it.
 		/// - Otherwise, optionally hides all popups (depending on <paramref name="popupChange"/>) and toggles view visibility.
-		/// </details>
 		/// <Param name="viewName">Target name (view or popup).</Param>
 		/// <Param name="popupChange">
 		/// When <c>false</c>, hide all visible popups before showing the view.
 		/// When <c>true</c>, keep existing popups as-is (do not force-hide).
 		/// </Param>
+		/// </summary>
 		public void Switch(string viewName, bool popupChange)
 		{
 			if (!_useSingleton) return;

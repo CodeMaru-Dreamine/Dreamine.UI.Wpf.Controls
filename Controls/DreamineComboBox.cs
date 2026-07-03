@@ -1,4 +1,4 @@
-﻿// =====================================================================
+// =====================================================================
 // \file DreamineComboBox.cs
 // \brief MVVM-style attached command trigger ComboBox
 // \details

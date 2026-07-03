@@ -1,4 +1,4 @@
-﻿// \file DreaminePasswordBox.cs
+// \file DreaminePasswordBox.cs
 // \brief Hint/Error 지원 + Password 바인딩 가능한 커스텀 PasswordBox 컨트롤
 // \details
 // - ControlTemplate 내부 PART_PasswordBox(PasswordBox)와 연동
@@ -22,7 +22,6 @@ namespace Dreamine.UI.Wpf.Controls
     /// - 내부 템플릿에 PART_PasswordBox(PasswordBox)가 존재해야 함
     /// - PasswordProperty를 VM에 TwoWay로 바인딩 가능
     /// - 재진입 가드로 StackOverflow 방지
-    /// </details>
     /// </summary>
     public class DreaminePasswordBox : Control
     {

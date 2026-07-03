@@ -197,7 +197,7 @@ namespace Dreamine.UI.Wpf.Controls
 	/// @brief 임의 요소 위에 <see cref="DreamineCheckLed"/>를 Adorner로 얹어주는 Attached 래퍼
 	/// @details 붙여 쓰기 예:
 	/// @code{.xml}
-	/// <VsControls:DreamineButton
+	/// &lt;VsControls:DreamineButton
 	///   VsControls:DreamineCheckLedAttach.IsEnabled="True"
 	///   VsControls:DreamineCheckLedAttach.IsOn="{Binding PusherExtendLed}"
 	///   VsControls:DreamineCheckLedAttach.IsPulse="True"

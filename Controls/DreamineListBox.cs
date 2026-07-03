@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -14,7 +14,7 @@ namespace Dreamine.UI.Wpf.Controls
 	///
 	/// Command binding can be applied in XAML as follows:
 	/// \code{.xaml}
-	/// <ListBox local:DreamineListBox.Command="{Binding ItemClickCommand}"
+	/// &lt;ListBox local:DreamineListBox.Command="{Binding ItemClickCommand}"
 	///          local:DreamineListBox.CommandParameter="{Binding SelectedItem}" />
 	/// \endcode
 	/// </summary>
@@ -22,13 +22,12 @@ namespace Dreamine.UI.Wpf.Controls
 	{
         /// <summary>
         /// \brief Static constructor (type initializer).
-        /// \details
+        /// Details:
         /// - Override DefaultStyleKey metadata ONCE per type.
         /// - Merge DreamineListBoxStyle.xaml into Application resources (only once).
-        /// \note
+        /// Note:
         /// - Do NOT call OverrideMetadata in instance constructor.
         ///   It can crash when controls are created multiple times.
-        /// </note>
         /// </summary>
         static DreamineListBox()
         {
@@ -55,10 +54,9 @@ namespace Dreamine.UI.Wpf.Controls
 
         /// <summary>
         /// \brief Default constructor.
-        /// \details
+        /// Details:
         /// - Keep it minimal.
         /// - Style is handled by static constructor.
-        /// </details>
         /// </summary>
         public DreamineListBox()
         {

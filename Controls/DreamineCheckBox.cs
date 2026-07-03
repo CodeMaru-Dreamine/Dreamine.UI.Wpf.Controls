@@ -1,4 +1,4 @@
-﻿// \file DreamineCheckBox.cs
+// \file DreamineCheckBox.cs
 // \brief Custom CheckBox control for VsLibrary. Supports attached Command/Parameter/Trigger and Enter/Space keyboard behavior.
 
 using System;

@@ -1,4 +1,4 @@
-﻿// =====================================================================
+// =====================================================================
 // \file DreamineTextBox.cs
 // \brief VsLibrary용 커스텀 TextBox. Hint/Error + CommandTrigger + Enter Focus UX 지원.
 // =====================================================================
@@ -16,11 +16,10 @@ namespace Dreamine.UI.Wpf.Controls
     /// <summary>
     /// \class DreamineTextBox
     /// \brief Custom TextBox control tailored for VsLibrary.
-    /// \details
+    /// Details:
     /// - Style 자동 Merge
     /// - Attached Command (PreviewMouseUp/MouseDoubleClick/PreviewKeyUp/TouchUp/Click/TextChanged)
     /// - Enter 입력 시 이전 포커스 대상으로 복귀(Enter Focus UX)
-    /// </details>
     /// </summary>
     public class DreamineTextBox : TextBox
     {
@@ -55,10 +54,9 @@ namespace Dreamine.UI.Wpf.Controls
 
         /// <summary>
         /// \brief ctor: 이전 포커스 저장을 "자기 자신" 이벤트에서 수행.
-        /// \details
+        /// Details:
         /// - Window 전역 이벤트에 매달면 누수/중복/예외 케이스가 많음
         /// - GotKeyboardFocus의 OldFocus가 "진짜 이전 포커스"로 들어오는 편이라 안정적
-        /// </details>
         /// </summary>
         public DreamineTextBox()
         {
@@ -103,10 +101,9 @@ namespace Dreamine.UI.Wpf.Controls
 
         /// <summary>
         /// \brief Enter 입력 시 이전 포커스 대상으로 복귀.
-        /// \details
+        /// Details:
         /// - Dispatcher로 "키 입력 처리 이후"에 포커스 이동해야 안정적
         /// - Keyboard.ClearFocus()는 포커스를 날려버리므로 사용 금지
-        /// </details>
         /// </summary>
         /// <param name="e">key event args</param>
         protected override void OnPreviewKeyDown(KeyEventArgs e)
