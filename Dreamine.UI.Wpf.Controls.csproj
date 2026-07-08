@@ -7,7 +7,7 @@
 		<UseWPF>true</UseWPF>
 
 		<PackageId>Dreamine.UI.Wpf.Controls</PackageId>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<Authors>Dreamine Core Team</Authors>
 		<Company>Dreamine</Company>
 		<Description>Custom WPF controls for the Dreamine UI library: DreamineButton, DreamineTextBox, MessageBox, Navigation, and more.</Description>
@@ -17,7 +17,14 @@
 		<Title>Dreamine.UI.Wpf.Controls</Title>
 		<Copyright>© 2025 Dreamine Core Team. All rights reserved.</Copyright>
 		<PackageProjectUrl>https://github.com/CodeMaru-Dreamine/Dreamine.MVVM.FullKit</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+		<None Include="icon.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\UI.Abstractions\Dreamine.UI.Abstractions.csproj" />
