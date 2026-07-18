@@ -5,9 +5,12 @@ using System.Windows.Input;
 namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 {
 	/// <summary>
-	/// Interaction logic for DreamineCheckSelector.xaml.
-	/// This control provides a checkbox with two associated radio buttons (Left/Right),
-	/// along with a text input box for configuring the maximum axis value.
+	/// \if KO
+	/// <para>체크박스, 좌우 라디오 버튼과 축 최대값 입력을 하나로 묶은 선택 컨트롤입니다.</para>
+	/// \endif
+	/// \if EN
+	/// <para>Provides a selector that combines a check box, left and right radio buttons, and an axis-maximum input.</para>
+	/// \endif
 	/// </summary>
 	public partial class DreamineCheckSelector : UserControl
 	{
@@ -15,6 +18,14 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
         // \brief Command
         // ---------------------------------------------------------------------
 
+        /// <summary>
+        /// \if KO
+        /// <para>내부 값이 변경될 때 실행할 명령 종속성 속성입니다.</para>
+        /// \endif
+        /// \if EN
+        /// <para>Identifies the command dependency property executed when an inner value changes.</para>
+        /// \endif
+        /// </summary>
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register(
                 nameof(Command),
@@ -22,6 +33,14 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
                 typeof(DreamineCheckSelector),
                 new PropertyMetadata(null));
 
+        /// <summary>
+        /// \if KO
+        /// <para>내부 값 변경 시 실행할 명령을 가져오거나 설정합니다.</para>
+        /// \endif
+        /// \if EN
+        /// <para>Gets or sets the command executed when an inner value changes.</para>
+        /// \endif
+        /// </summary>
         public ICommand? Command
         {
             get => (ICommand?)GetValue(CommandProperty);
@@ -29,17 +48,42 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
         }
                 
         // -- Remembers the last State of the Left/Right radio buttons
+        /// <summary>
+        /// \if KO
+        /// <para>마지막 좌측 라디오 선택 상태를 저장합니다.</para>
+        /// \endif
+        /// \if EN
+        /// <para>Stores the last left-radio selection state.</para>
+        /// \endif
+        /// </summary>
         private bool _lastLeftChecked = true;
+		/// <summary>
+		/// \if KO
+		/// <para>마지막 우측 라디오 선택 상태를 저장합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Stores the last right-radio selection state.</para>
+		/// \endif
+		/// </summary>
 		private bool _lastRightChecked = false;
 
 		/// <summary>
-		/// Event raised when any internal value (checkbox, radio, or textbox) changes.
+		/// \if KO
+		/// <para>내부 체크박스, 라디오 버튼 또는 텍스트 값이 변경될 때 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Occurs when an inner check box, radio button, or text value changes.</para>
+		/// \endif
 		/// </summary>
 		public event RoutedEventHandler ValueChanged = null!;
 
 		/// <summary>
-		/// Initializes a new Instance of the <see cref="DreamineCheckSelector"/> class.
-		/// Subscribes to internal control events.
+		/// \if KO
+		/// <para>구성 요소를 초기화하고 내부 컨트롤 이벤트를 구독합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Initializes the component and subscribes to inner-control events.</para>
+		/// \endif
 		/// </summary>
 		public DreamineCheckSelector()
 		{
@@ -56,10 +100,21 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
 		/// <summary>
-		/// Handles logic when the checkbox is checked or unchecked.
-		/// Automatically restores or resets the radio button states.
+		/// \if KO
+		/// <para>체크 상태에 따라 마지막 라디오 선택을 복원하거나 현재 선택을 해제합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Restores the last radio selection or clears the current selection according to check state.</para>
+		/// \endif
 		/// </summary>
-		/// <Param name="isChecked">Indicates whether the checkbox is checked.</Param>
+		/// <param name="isChecked">
+		/// \if KO
+		/// <para>체크박스가 선택되었는지 나타냅니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Indicates whether the check box is selected.</para>
+		/// \endif
+		/// </param>
 		private void OnCheckedChanged(bool isChecked)
 		{
 			if (isChecked)
@@ -87,9 +142,21 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
 		/// <summary>
-		/// Stores the last selected radio button State for restoration.
+		/// \if KO
+		/// <para>나중에 복원할 좌우 라디오 선택 상태를 저장합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Stores left and right radio selection state for later restoration.</para>
+		/// \endif
 		/// </summary>
-		/// <Param name="left">True if Left radio button is selected; otherwise false.</Param>
+		/// <param name="left">
+		/// \if KO
+		/// <para>왼쪽이 선택되었으면 <see langword="true"/>입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para><see langword="true"/> when the left option is selected.</para>
+		/// \endif
+		/// </param>
 		private void RememberRadio(bool left)
 		{
 			_lastLeftChecked = left;
@@ -97,7 +164,12 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
         /// <summary>
-        /// Raises the <see cref="ValueChanged"/> event to notify external consumers of a State change.
+        /// \if KO
+        /// <para><see cref="ValueChanged"/> 이벤트를 발생시키고 구성된 명령을 현재 컨트롤과 함께 실행합니다.</para>
+        /// \endif
+        /// \if EN
+        /// <para>Raises <see cref="ValueChanged"/> and executes the configured command with this control.</para>
+        /// \endif
         /// </summary>
         private void RaiseValueChanged()
         {
@@ -111,12 +183,24 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 
 
         /// <summary>
-        /// Gets or sets whether the checkbox is checked.
+        /// \if KO
+        /// <para>체크박스 선택 상태 종속성 속성입니다.</para>
+        /// \endif
+        /// \if EN
+        /// <para>Identifies the check-box selection-state dependency property.</para>
+        /// \endif
         /// </summary>
         public static readonly DependencyProperty IsCheckedProperty =
 			DependencyProperty.Register(nameof(IsChecked), typeof(bool), typeof(DreamineCheckSelector), new PropertyMetadata(false));
 
-		/// <inheritdoc cref="IsCheckedProperty"/>
+		/// <summary>
+		/// \if KO
+		/// <para>체크박스가 선택되어 있는지 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets whether the check box is selected.</para>
+		/// \endif
+		/// </summary>
 		public bool IsChecked
 		{
 			get => (bool)GetValue(IsCheckedProperty);
@@ -124,12 +208,24 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
 		/// <summary>
-		/// Gets or sets whether the Left radio button is selected.
+		/// \if KO
+		/// <para>왼쪽 라디오 선택 상태 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the left-radio selection-state dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty IsLeftCheckedProperty =
 			DependencyProperty.Register(nameof(IsLeftChecked), typeof(bool), typeof(DreamineCheckSelector), new PropertyMetadata(false));
 
-		/// <inheritdoc cref="IsLeftCheckedProperty"/>
+		/// <summary>
+		/// \if KO
+		/// <para>왼쪽 라디오 버튼이 선택되어 있는지 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets whether the left radio button is selected.</para>
+		/// \endif
+		/// </summary>
 		public bool IsLeftChecked
 		{
 			get => (bool)GetValue(IsLeftCheckedProperty);
@@ -137,12 +233,24 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
 		/// <summary>
-		/// Gets or sets whether the Right radio button is selected.
+		/// \if KO
+		/// <para>오른쪽 라디오 선택 상태 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the right-radio selection-state dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty IsRightCheckedProperty =
 			DependencyProperty.Register(nameof(IsRightChecked), typeof(bool), typeof(DreamineCheckSelector), new PropertyMetadata(false));
 
-		/// <inheritdoc cref="IsRightCheckedProperty"/>
+		/// <summary>
+		/// \if KO
+		/// <para>오른쪽 라디오 버튼이 선택되어 있는지 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets whether the right radio button is selected.</para>
+		/// \endif
+		/// </summary>
 		public bool IsRightChecked
 		{
 			get => (bool)GetValue(IsRightCheckedProperty);
@@ -150,12 +258,24 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
 		/// <summary>
-		/// Gets or sets the display text next to the checkbox.
+		/// \if KO
+		/// <para>체크박스 표시 텍스트 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the check-box display-text dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty CheckTextProperty =
 			DependencyProperty.Register(nameof(CheckText), typeof(string), typeof(DreamineCheckSelector), new PropertyMetadata("체크"));
 
-		/// <inheritdoc cref="CheckTextProperty"/>
+		/// <summary>
+		/// \if KO
+		/// <para>체크박스 옆에 표시할 텍스트를 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the text displayed beside the check box.</para>
+		/// \endif
+		/// </summary>
 		public string CheckText
 		{
 			get => (string)GetValue(CheckTextProperty);
@@ -163,12 +283,24 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
 		/// <summary>
-		/// Gets or sets the display text for the Left radio button.
+		/// \if KO
+		/// <para>왼쪽 라디오 표시 텍스트 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the left-radio display-text dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty LeftRadioTextProperty =
 			DependencyProperty.Register(nameof(LeftRadioText), typeof(string), typeof(DreamineCheckSelector), new PropertyMetadata("LEFT"));
 
-		/// <inheritdoc cref="LeftRadioTextProperty"/>
+		/// <summary>
+		/// \if KO
+		/// <para>왼쪽 라디오 버튼의 표시 텍스트를 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the left radio button's display text.</para>
+		/// \endif
+		/// </summary>
 		public string LeftRadioText
 		{
 			get => (string)GetValue(LeftRadioTextProperty);
@@ -176,12 +308,24 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
 		/// <summary>
-		/// Gets or sets the display text for the Right radio button.
+		/// \if KO
+		/// <para>오른쪽 라디오 표시 텍스트 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the right-radio display-text dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty RightRadioTextProperty =
 			DependencyProperty.Register(nameof(RightRadioText), typeof(string), typeof(DreamineCheckSelector), new PropertyMetadata("RIGHT"));
 
-		/// <inheritdoc cref="RightRadioTextProperty"/>
+		/// <summary>
+		/// \if KO
+		/// <para>오른쪽 라디오 버튼의 표시 텍스트를 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the right radio button's display text.</para>
+		/// \endif
+		/// </summary>
 		public string RightRadioText
 		{
 			get => (string)GetValue(RightRadioTextProperty);
@@ -189,13 +333,24 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
 		/// <summary>
-		/// Gets or sets the group name for the radio buttons. 
-		/// This ensures mutual exclusivity if multiple instances are on the same form.
+		/// \if KO
+		/// <para>라디오 버튼 상호 배타 그룹 이름 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the radio-button mutual-exclusion group-name dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty GroupNameProperty =
 			DependencyProperty.Register(nameof(GroupName), typeof(string), typeof(DreamineCheckSelector), new PropertyMetadata("AxisSelectorGroup"));
 
-		/// <inheritdoc cref="GroupNameProperty"/>
+		/// <summary>
+		/// \if KO
+		/// <para>라디오 버튼 그룹 이름을 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the radio-button group name.</para>
+		/// \endif
+		/// </summary>
 		public string GroupName
 		{
 			get => (string)GetValue(GroupNameProperty);
@@ -203,13 +358,24 @@ namespace Dreamine.UI.Wpf.Controls.VsCustomControls
 		}
 
 		/// <summary>
-		/// Gets or sets the maximum value of the axis as string. 
-		/// This value is typically used for input binding from the textbox.
+		/// \if KO
+		/// <para>문자열 축 최대값 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the string-valued axis-maximum dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty AxisMaxProperty =
 			DependencyProperty.Register(nameof(AxisMax), typeof(string), typeof(DreamineCheckSelector), new PropertyMetadata("20"));
 
-		/// <inheritdoc cref="AxisMaxProperty"/>
+		/// <summary>
+		/// \if KO
+		/// <para>텍스트 입력에 바인딩할 축 최대값 문자열을 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the axis-maximum text bound to the input box.</para>
+		/// \endif
+		/// </summary>
 		public string AxisMax
 		{
 			get => (string)GetValue(AxisMaxProperty);

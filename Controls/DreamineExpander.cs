@@ -6,24 +6,22 @@ using System.Windows.Media;
 namespace Dreamine.UI.Wpf.Controls
 {
 	/// <summary>
-	/// \class DreamineExpander
-	/// \brief Custom expandable container with additional styling and command features for VsLibrary.
-	///
-	/// This control extends <see cref="HeaderedContentControl"/> and provides:
-	/// - Custom styling without requiring App.xaml registration.
-	/// - Command binding on expand/collapse State change.
-	/// - Arrow icon positioning (Left/Right).
-	/// - Expand animation toggle.
+	/// \if KO
+	/// <para>확장 상태 명령, 화살표 배치와 애니메이션 설정을 제공하는 사용자 지정 콘텐츠 컨테이너입니다.</para>
+	/// \endif
+	/// \if EN
+	/// <para>Provides a custom content container with expansion-state commands, arrow placement, and animation settings.</para>
+	/// \endif
 	/// </summary>
 	public class DreamineExpander : HeaderedContentControl
 	{
 		/// <summary>
-		/// Static constructor for <see cref="DreamineExpander"/>.
-		/// 
-		/// - Overrides the default style key to apply custom styles.
-		/// - Automatically merges the DreamineExpander style XAML into application resources at runtime.
-		///   This eliminates the need to manually register styles in App.xaml.
-		/// - Ensures the resource dictionary is added only once to avoid duplication.
+		/// \if KO
+		/// <para>기본 스타일 키를 재정의하고 Expander 테마 리소스를 한 번만 병합합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Overrides the default style key and merges the expander theme resources once.</para>
+		/// \endif
 		/// </summary>
 		static DreamineExpander()
 		{
@@ -47,7 +45,12 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Gets or sets whether the expander is currently expanded.
+		/// \if KO
+		/// <para>콘텐츠가 현재 확장되어 있는지 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets whether the content is currently expanded.</para>
+		/// \endif
 		/// </summary>
 		public bool IsExpanded
 		{
@@ -56,16 +59,49 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Identifies the IsExpanded dependency property.
+		/// \if KO
+		/// <para><see cref="IsExpanded"/> 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the <see cref="IsExpanded"/> dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty IsExpandedProperty =
 			DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(DreamineExpander),
 				new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnIsExpandedChanged));
 
 		/// <summary>
-		/// Called when the IsExpanded property is changed.
-		/// Executes the bound <see cref="ExpandChangedCommand"/> if present.
+		/// \if KO
+		/// <para>확장 상태 변경 시 명령을 실행하거나 확장 아이콘이 없으면 접힘을 취소합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Executes the state-change command or cancels collapse when no expand icon is shown.</para>
+		/// \endif
 		/// </summary>
+		/// <param name="d">
+		/// \if KO
+		/// <para>상태가 변경된 Expander입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The expander whose state changed.</para>
+		/// \endif
+		/// </param>
+		/// <param name="e">
+		/// \if KO
+		/// <para>이전 값과 새 값을 포함한 변경 데이터입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Change data containing the old and new values.</para>
+		/// \endif
+		/// </param>
+		/// <exception cref="InvalidCastException">
+		/// \if KO
+		/// <para>새 값이 부울이 아니면 발생할 수 있습니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>May be thrown when the new value is not Boolean.</para>
+		/// \endif
+		/// </exception>
 		private static void OnIsExpandedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if (d is DreamineExpander expander)
@@ -83,7 +119,12 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Gets or sets the command to execute when the expanded State changes.
+		/// \if KO
+		/// <para>확장 상태가 바뀔 때 실행할 명령을 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the command executed when expansion state changes.</para>
+		/// \endif
 		/// </summary>
 		public ICommand ExpandChangedCommand
 		{
@@ -92,13 +133,23 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Identifies the ExpandChangedCommand dependency property.
+		/// \if KO
+		/// <para><see cref="ExpandChangedCommand"/> 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the <see cref="ExpandChangedCommand"/> dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty ExpandChangedCommandProperty =
 			DependencyProperty.Register(nameof(ExpandChangedCommand), typeof(ICommand), typeof(DreamineExpander));
 
 		/// <summary>
-		/// Gets or sets whether to use animation when expanding or collapsing.
+		/// \if KO
+		/// <para>확장하거나 접을 때 애니메이션을 사용할지 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets whether animation is used while expanding or collapsing.</para>
+		/// \endif
 		/// </summary>
 		public bool UseExpandAnimation
 		{
@@ -107,13 +158,23 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Identifies the UseExpandAnimation dependency property.
+		/// \if KO
+		/// <para><see cref="UseExpandAnimation"/> 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the <see cref="UseExpandAnimation"/> dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty UseExpandAnimationProperty =
 			DependencyProperty.Register(nameof(UseExpandAnimation), typeof(bool), typeof(DreamineExpander), new PropertyMetadata(true));
 
 		/// <summary>
-		/// Gets or sets the position of the expand arrow icon (Left or Right).
+		/// \if KO
+		/// <para>확장 화살표 아이콘의 위치를 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the expand-arrow icon position.</para>
+		/// \endif
 		/// </summary>
 		public ExpanderArrowPlacement ArrowPlacement
 		{
@@ -122,14 +183,24 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Identifies the ArrowPlacement dependency property.
+		/// \if KO
+		/// <para><see cref="ArrowPlacement"/> 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the <see cref="ArrowPlacement"/> dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty ArrowPlacementProperty =
 			DependencyProperty.Register(nameof(ArrowPlacement), typeof(ExpanderArrowPlacement), typeof(DreamineExpander),
 				new PropertyMetadata(ExpanderArrowPlacement.Left));
 
 		/// <summary>
-		/// Gets or sets the font size used in the header.
+		/// \if KO
+		/// <para>헤더 글꼴 크기를 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the header font size.</para>
+		/// \endif
 		/// </summary>
 		public double HeaderFontSize
 		{
@@ -138,13 +209,23 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Identifies the HeaderFontSize dependency property.
+		/// \if KO
+		/// <para><see cref="HeaderFontSize"/> 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the <see cref="HeaderFontSize"/> dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty HeaderFontSizeProperty =
 			DependencyProperty.Register("HeaderFontSize", typeof(double), typeof(DreamineExpander), new PropertyMetadata(SystemFonts.MessageFontSize));
 
 		/// <summary>
-		/// Gets or sets the font weight used in the header.
+		/// \if KO
+		/// <para>헤더 글꼴 두께를 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the header font weight.</para>
+		/// \endif
 		/// </summary>
 		public FontWeight HeaderFontWeight
 		{
@@ -153,13 +234,23 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Identifies the HeaderFontWeight dependency property.
+		/// \if KO
+		/// <para><see cref="HeaderFontWeight"/> 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the <see cref="HeaderFontWeight"/> dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty HeaderFontWeightProperty =
 			DependencyProperty.Register("HeaderFontWeight", typeof(FontWeight), typeof(DreamineExpander), new PropertyMetadata(FontWeights.Normal));
 
 		/// <summary>
-		/// Gets or sets the foreground brush of the header text.
+		/// \if KO
+		/// <para>헤더 텍스트의 전경 브러시를 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets the header-text foreground brush.</para>
+		/// \endif
 		/// </summary>
 		public Brush HeaderForeground
 		{
@@ -168,13 +259,23 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Identifies the HeaderForeground dependency property.
+		/// \if KO
+		/// <para><see cref="HeaderForeground"/> 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the <see cref="HeaderForeground"/> dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty HeaderForegroundProperty =
 			DependencyProperty.Register("HeaderForeground", typeof(Brush), typeof(DreamineExpander), new PropertyMetadata(SystemColors.ControlTextBrush));
 
 		/// <summary>
-		/// Gets or sets whether the expand/collapse icon is visible.
+		/// \if KO
+		/// <para>확장·접기 아이콘을 표시할지 가져오거나 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets or sets whether the expand-collapse icon is shown.</para>
+		/// \endif
 		/// </summary>
 		public bool ShowExpandIcon
 		{
@@ -183,7 +284,12 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Identifies the ShowExpandIcon dependency property.
+		/// \if KO
+		/// <para><see cref="ShowExpandIcon"/> 종속성 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the <see cref="ShowExpandIcon"/> dependency property.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty ShowExpandIconProperty =
 			DependencyProperty.Register(nameof(ShowExpandIcon), typeof(bool), typeof(DreamineExpander),
@@ -191,18 +297,32 @@ namespace Dreamine.UI.Wpf.Controls
 	}
 
 	/// <summary>
-	/// \enum ExpanderArrowPlacement
-	/// \brief Defines the alignment of the expand/collapse arrow icon in the <see cref="DreamineExpander"/>.
+	/// \if KO
+	/// <para><see cref="DreamineExpander"/> 헤더에서 확장 화살표의 배치를 지정합니다.</para>
+	/// \endif
+	/// \if EN
+	/// <para>Specifies placement of the expand arrow in a <see cref="DreamineExpander"/> header.</para>
+	/// \endif
 	/// </summary>
 	public enum ExpanderArrowPlacement
 	{
 		/// <summary>
-		/// Arrow is displayed on the Left side of the header.
+		/// \if KO
+		/// <para>헤더 왼쪽에 화살표를 표시합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Displays the arrow on the left side of the header.</para>
+		/// \endif
 		/// </summary>
 		Left,
 
 		/// <summary>
-		/// Arrow is displayed on the Right side of the header.
+		/// \if KO
+		/// <para>헤더 오른쪽에 화살표를 표시합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Displays the arrow on the right side of the header.</para>
+		/// \endif
 		/// </summary>
 		Right
 	}

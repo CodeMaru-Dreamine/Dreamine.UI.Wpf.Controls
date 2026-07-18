@@ -6,28 +6,22 @@ using System.Windows.Input;
 namespace Dreamine.UI.Wpf.Controls
 {
 	/// <summary>
-	/// \class DreamineListBox  
-	/// \brief Extended ListBox class that supports command execution on item selection.
-	///
-	/// This class inherits from the standard ListBox and internally uses attached properties  
-	/// to execute an <c>ICommand</c> via <c>PreviewMouseUp</c> and <c>PreviewKeyDown</c> events.
-	///
-	/// Command binding can be applied in XAML as follows:
-	/// \code{.xaml}
-	/// &lt;ListBox local:DreamineListBox.Command="{Binding ItemClickCommand}"
-	///          local:DreamineListBox.CommandParameter="{Binding SelectedItem}" />
-	/// \endcode
+	/// \if KO
+	/// <para>전용 스타일과 항목 상호작용 이벤트용 연결 명령을 제공하는 사용자 지정 목록 상자입니다.</para>
+	/// \endif
+	/// \if EN
+	/// <para>Provides a custom list box with a dedicated style and attached commands for item-interaction events.</para>
+	/// \endif
 	/// </summary>
 	public class DreamineListBox : ListBox
 	{
         /// <summary>
-        /// \brief Static constructor (type initializer).
-        /// Details:
-        /// - Override DefaultStyleKey metadata ONCE per type.
-        /// - Merge DreamineListBoxStyle.xaml into Application resources (only once).
-        /// Note:
-        /// - Do NOT call OverrideMetadata in instance constructor.
-        ///   It can crash when controls are created multiple times.
+        /// \if KO
+        /// <para>기본 스타일 키를 한 번 재정의하고 목록 상자 테마 리소스를 병합합니다.</para>
+        /// \endif
+        /// \if EN
+        /// <para>Overrides the default style key once and merges the list-box theme resources.</para>
+        /// \endif
         /// </summary>
         static DreamineListBox()
         {
@@ -53,10 +47,12 @@ namespace Dreamine.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// \brief Default constructor.
-        /// Details:
-        /// - Keep it minimal.
-        /// - Style is handled by static constructor.
+        /// \if KO
+        /// <para>목록 상자를 만들고 스타일 리소스가 병합되었는지 다시 확인합니다.</para>
+        /// \endif
+        /// \if EN
+        /// <para>Initializes the list box and ensures that its style resources are merged.</para>
+        /// \endif
         /// </summary>
         public DreamineListBox()
         {
@@ -64,8 +60,12 @@ namespace Dreamine.UI.Wpf.Controls
         }
 
         /// <summary>
-		/// \brief DreamineListBoxStyle.xaml을 Application Resource에 1회만 병합한다.
-		/// \note 디자인타임/테스트 환경에서 Application.Current가 null일 수 있으므로 null-safe 처리한다.
+		/// \if KO
+		/// <para>현재 애플리케이션에 목록 상자 스타일 리소스를 한 번만 병합합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Merges the list-box style resources into the current application only once.</para>
+		/// \endif
 		/// </summary>
 		private static void TryMergeStyleOnce()
         {
@@ -89,11 +89,12 @@ namespace Dreamine.UI.Wpf.Controls
 
 
         /// <summary>
-        /// \property Command
-        /// \brief Defines an ICommand to be executed when a specified event occurs.
-        ///
-        /// This property is defined as an AttachedProperty and  
-        /// executes the bound ICommand when events like Click, TouchUp, or PreviewKeyUp are triggered.
+        /// \if KO
+        /// <para>구성된 입력 이벤트에서 실행할 연결 명령 속성입니다.</para>
+        /// \endif
+        /// \if EN
+        /// <para>Identifies the attached command executed for configured input events.</para>
+        /// \endif
         /// </summary>
         public static readonly DependencyProperty CommandProperty =
 								  DependencyProperty.RegisterAttached(
@@ -103,11 +104,12 @@ namespace Dreamine.UI.Wpf.Controls
 									  new PropertyMetadata(null, OnCommandChanged));
 
 		/// <summary>
-		/// \property CommandParameter
-		/// \brief The parameter to pass when executing the Command.
-		///
-		/// If this property is not set, the event argument (e.g., RoutedEventArgs or MouseButtonEventArgs)  
-		/// will be passed automatically as the default parameter.
+		/// \if KO
+		/// <para>명령에 전달할 연결 매개변수 속성입니다. 값이 없으면 이벤트 데이터가 전달됩니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the attached command parameter; event data is passed when absent.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty CommandParameterProperty =
 			DependencyProperty.RegisterAttached(
@@ -117,11 +119,12 @@ namespace Dreamine.UI.Wpf.Controls
 				new PropertyMetadata(null));
 
 		/// <summary>
-		/// \property CommandTriggerName
-		/// \brief The event name that determines when the Command should be executed.
-		///
-		/// For example: "Click", "PreviewMouseUp", "PreviewKeyUp", "TouchUp", etc.  
-		/// The command will only be executed if the specified event name matches the actual triggered event.
+		/// \if KO
+		/// <para>명령을 실행할 쉼표 구분 이벤트 이름 목록 속성입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Identifies the comma-separated event-name list that triggers the command.</para>
+		/// \endif
 		/// </summary>
 		public static readonly DependencyProperty CommandTriggerNameProperty =
 		DependencyProperty.RegisterAttached(
@@ -131,61 +134,261 @@ namespace Dreamine.UI.Wpf.Controls
 			new PropertyMetadata(null));
 
 		/// <summary>
-		/// Sets the value of the CommandTriggerName property.
+		/// \if KO
+		/// <para>명령 트리거 이벤트 이름을 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Sets command-trigger event names.</para>
+		/// \endif
 		/// </summary>
+		/// <param name="obj">
+		/// \if KO
+		/// <para>값을 설정할 개체입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The object on which to set the value.</para>
+		/// \endif
+		/// </param>
+		/// <param name="value">
+		/// \if KO
+		/// <para>쉼표 구분 이벤트 이름입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Comma-separated event names.</para>
+		/// \endif
+		/// </param>
+		/// <exception cref="ArgumentNullException">
+		/// \if KO
+		/// <para><paramref name="obj"/>가 null이면 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="obj"/> is null.</para>
+		/// \endif
+		/// </exception>
 		public static void SetCommandTriggerName(DependencyObject obj, string value)
 			=> obj.SetValue(CommandTriggerNameProperty, value);
 
 		/// <summary>
-		/// Gets the value of the CommandTriggerName property.
+		/// \if KO
+		/// <para>명령 트리거 이벤트 이름을 가져옵니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets command-trigger event names.</para>
+		/// \endif
 		/// </summary>
+		/// <param name="obj">
+		/// \if KO
+		/// <para>값을 읽을 개체입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The object from which to read the value.</para>
+		/// \endif
+		/// </param>
+		/// <returns>
+		/// \if KO
+		/// <para>구성된 이벤트 이름입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The configured event names.</para>
+		/// \endif
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		/// \if KO
+		/// <para><paramref name="obj"/>가 null이면 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="obj"/> is null.</para>
+		/// \endif
+		/// </exception>
+		/// <exception cref="InvalidCastException">
+		/// \if KO
+		/// <para>저장된 값이 문자열이 아니면 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when the stored value is not a string.</para>
+		/// \endif
+		/// </exception>
 		public static string GetCommandTriggerName(DependencyObject obj)
 			=> (string)obj.GetValue(CommandTriggerNameProperty);
 
 		/// <summary>
-		/// Sets the value of the Command attached property.
+		/// \if KO
+		/// <para>실행할 연결 명령을 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Sets the attached command to execute.</para>
+		/// \endif
 		/// </summary>
-		/// <Param name="obj">The target DependencyObject.</Param>
-		/// <Param name="value">The ICommand Instance to bind.</Param>
+		/// <param name="obj">
+		/// \if KO
+		/// <para>값을 설정할 개체입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The object on which to set the value.</para>
+		/// \endif
+		/// </param>
+		/// <param name="value">
+		/// \if KO
+		/// <para>실행할 명령입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The command to execute.</para>
+		/// \endif
+		/// </param>
+		/// <exception cref="ArgumentNullException">
+		/// \if KO
+		/// <para><paramref name="obj"/>가 null이면 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="obj"/> is null.</para>
+		/// \endif
+		/// </exception>
 		public static void SetCommand(DependencyObject obj, ICommand value) => obj.SetValue(CommandProperty, value);
 
 		/// <summary>
-		/// Gets the value of the Command attached property.
+		/// \if KO
+		/// <para>설정된 연결 명령을 가져옵니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets the configured attached command.</para>
+		/// \endif
 		/// </summary>
-		/// <Param name="obj">The target DependencyObject.</Param>
-		/// <returns>The currently bound ICommand.</returns>
+		/// <param name="obj">
+		/// \if KO
+		/// <para>값을 읽을 개체입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The object from which to read the value.</para>
+		/// \endif
+		/// </param>
+		/// <returns>
+		/// \if KO
+		/// <para>구성된 명령입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The configured command.</para>
+		/// \endif
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		/// \if KO
+		/// <para><paramref name="obj"/>가 null이면 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="obj"/> is null.</para>
+		/// \endif
+		/// </exception>
+		/// <exception cref="InvalidCastException">
+		/// \if KO
+		/// <para>저장된 값이 명령이 아니면 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when the stored value is not a command.</para>
+		/// \endif
+		/// </exception>
 		public static ICommand GetCommand(DependencyObject obj) => (ICommand)obj.GetValue(CommandProperty);
 
 		/// <summary>
-		/// Sets the value of the CommandParameter attached property.
+		/// \if KO
+		/// <para>연결 명령 매개변수를 설정합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Sets the attached command parameter.</para>
+		/// \endif
 		/// </summary>
-		/// <Param name="obj">The target DependencyObject.</Param>
-		/// <Param name="value">The parameter to pass when executing the command.</Param>
+		/// <param name="obj">
+		/// \if KO
+		/// <para>값을 설정할 개체입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The object on which to set the value.</para>
+		/// \endif
+		/// </param>
+		/// <param name="value">
+		/// \if KO
+		/// <para>명령 매개변수입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The command parameter.</para>
+		/// \endif
+		/// </param>
+		/// <exception cref="ArgumentNullException">
+		/// \if KO
+		/// <para><paramref name="obj"/>가 null이면 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="obj"/> is null.</para>
+		/// \endif
+		/// </exception>
 		public static void SetCommandParameter(DependencyObject obj, object value)
 			=> obj.SetValue(CommandParameterProperty, value);
 
 		/// <summary>
-		/// Gets the value of the CommandParameter attached property.
+		/// \if KO
+		/// <para>연결 명령 매개변수를 가져옵니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Gets the attached command parameter.</para>
+		/// \endif
 		/// </summary>
-		/// <Param name="obj">The target DependencyObject.</Param>
-		/// <returns>The currently set command parameter object.</returns>
+		/// <param name="obj">
+		/// \if KO
+		/// <para>값을 읽을 개체입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The object from which to read the value.</para>
+		/// \endif
+		/// </param>
+		/// <returns>
+		/// \if KO
+		/// <para>구성된 명령 매개변수입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The configured command parameter.</para>
+		/// \endif
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		/// \if KO
+		/// <para><paramref name="obj"/>가 null이면 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="obj"/> is null.</para>
+		/// \endif
+		/// </exception>
 		public static object GetCommandParameter(DependencyObject obj)
 			=> obj.GetValue(CommandParameterProperty);
 
 		/// <summary>
-		/// Registers event handlers when the Command property is changed.
-		///
-		/// Supported internal events:
-		/// - PreviewMouseUp (MouseButtonEventArgs)
-		/// - MouseDoubleClick (MouseButtonEventArgs)
-		/// - PreviewKeyDown (interpreted as PreviewKeyUp)
-		/// - TouchUp (TouchEventArgs)
-		/// - Click (RoutedEventArgs)
-		///
-		/// During runtime, only the events whose names match the `CommandTriggerName` will invoke the bound ICommand.
+		/// \if KO
+		/// <para>명령 값 변경 시 마우스, 키보드, 터치와 클릭 이벤트 처리기를 연결합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Attaches mouse, keyboard, touch, and click event handlers when the command changes.</para>
+		/// \endif
 		/// </summary>
-		/// <Param name="d">The DependencyObject to which the command is attached (usually a DreamineListBox or other UIElement).</Param>
-		/// <Param name="e">The event arguments for the property change.</Param>
+		/// <param name="d">
+		/// \if KO
+		/// <para>명령 값이 변경된 개체입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The object whose command changed.</para>
+		/// \endif
+		/// </param>
+		/// <param name="e">
+		/// \if KO
+		/// <para>속성 변경 데이터입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The property-change data.</para>
+		/// \endif
+		/// </param>
+		/// <remarks>
+		/// \if KO
+		/// <para>현재 구현은 명령이 다시 변경될 때 처리기를 중복 연결할 수 있습니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The current implementation can attach duplicate handlers when the command changes again.</para>
+		/// \endif
+		/// </remarks>
 		private static void OnCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if (d is UIElement element)
@@ -219,17 +422,37 @@ namespace Dreamine.UI.Wpf.Controls
 		}
 
 		/// <summary>
-		/// Executes the attached command if the given event name matches one of the values specified in `CommandTriggerName`.
-		///
-		/// The `CommandTriggerName` supports multiple values separated by commas.  
-		/// If any value matches the actual event name, the command will be executed.
-		///
-		/// If `CommandParameter` is set, it will be passed to the command execution.  
-		/// Otherwise, the event arguments (e.g., RoutedEventArgs, MouseButtonEventArgs) are used as the default parameter.
+		/// \if KO
+		/// <para>발생한 이벤트 이름이 트리거 목록과 일치하면 연결 명령을 실행합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Executes the attached command when the event name matches the trigger list.</para>
+		/// \endif
 		/// </summary>
-		/// <Param name="d">The object where the command and trigger properties are set.</Param>
-		/// <Param name="eventName">The actual name of the event that occurred (e.g., "Click", "PreviewMouseUp").</Param>
-		/// <Param name="eventArgs">The arguments for the event that triggered the command.</Param>
+		/// <param name="d">
+		/// \if KO
+		/// <para>명령 설정을 보유한 개체입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The object that owns command settings.</para>
+		/// \endif
+		/// </param>
+		/// <param name="eventName">
+		/// \if KO
+		/// <para>발생한 이벤트 이름입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The name of the event that occurred.</para>
+		/// \endif
+		/// </param>
+		/// <param name="eventArgs">
+		/// \if KO
+		/// <para>기본 명령 매개변수로 사용할 이벤트 데이터입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Event data used as the default command parameter.</para>
+		/// \endif
+		/// </param>
 		private static void TryExecuteCommand(DependencyObject d, string eventName, RoutedEventArgs eventArgs)
 		{
 			var rawTrigger = GetCommandTriggerName(d);

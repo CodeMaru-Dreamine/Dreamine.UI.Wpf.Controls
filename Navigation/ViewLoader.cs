@@ -11,64 +11,124 @@ using Dreamine.MVVM.ViewModels;
 namespace Dreamine.UI.Wpf.Controls.ViewRegion
 {
 	/// <summary>
-	/// @brief View 타입 이름으로 View를 만들고, 대응 ViewModel을 DI로 resolve하여 DataContext에 연결합니다.
-	/// @details
-	/// - UserControl/Page/Window/그 외 FrameworkElement 모두 지원
-	/// - Page는 Frame에 호스팅되며, Navigated/Loaded 타이밍에 맞춰 DataContext를 주입합니다.
-	/// - 반환: 임베드 가능한 <see cref="FrameworkElement"/>와 호환성을 위한 <see cref="UserControl"/> 래퍼 동시 제공
+	/// \if KO
+	/// <para>이름 규칙과 DI를 이용해 뷰 및 뷰 모델을 만들고 임베드 가능한 요소로 연결합니다.</para>
+	/// \endif
+	/// \if EN
+	/// <para>Creates a view and view model through naming conventions and DI, then wires them into an embeddable element.</para>
+	/// \endif
 	/// </summary>
 	public static class ViewLoader
 	{
 		/// <summary>
-		/// @brief 로드된 View 및 ViewModel 메타 정보.
+		/// \if KO
+		/// <para>로드된 뷰, 뷰 모델 형식 및 인스턴스 구분 정보를 담습니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Contains the loaded view, view-model type, and instance-identification metadata.</para>
+		/// \endif
 		/// </summary>
 		public class LoadedViewInfo
 		{
 			/// <summary>
-			/// @brief 호환성을 위한 UserControl 래퍼. 임베드가 필요한 경우 이 컨트롤을 사용하세요.
-			/// @details 원 뷰가 UserControl이면 그대로, 아니면 내부에 래핑된 요소가 들어갑니다.
+			/// \if KO
+			/// <para>호환성을 위한 사용자 컨트롤 래퍼를 가져오거나 설정합니다.</para>
+			/// \endif
+			/// \if EN
+			/// <para>Gets or sets the user-control wrapper provided for compatibility.</para>
+			/// \endif
 			/// </summary>
 			public UserControl? View { get; set; }
 
 			/// <summary>
-			/// @brief 원본/최종 임베드 가능한 뷰 요소(프레임/컨텐츠호스트 포함).
+			/// \if KO
+			/// <para>프레임이나 콘텐츠 호스트를 포함한 최종 임베드 가능 요소를 가져오거나 설정합니다.</para>
+			/// \endif
+			/// \if EN
+			/// <para>Gets or sets the final embeddable element, including any frame or content host.</para>
+			/// \endif
 			/// </summary>
 			public FrameworkElement? FrameworkView { get; set; }
 
 			/// <summary>
-			/// @brief Resolve된 ViewModel 타입(없으면 null).
+			/// \if KO
+			/// <para>확인된 뷰 모델 형식을 가져오거나 설정하며 없으면 <see langword="null"/>입니다.</para>
+			/// \endif
+			/// \if EN
+			/// <para>Gets or sets the resolved view-model type, or <see langword="null"/> when none was found.</para>
+			/// \endif
 			/// </summary>
 			public Type? ViewModelType { get; set; }
 
 			/// <summary>
-			/// @brief _Popup 네이밍 규칙에 의한 팝업 플래그.
+			/// \if KO
+			/// <para><c>_Popup</c> 접미사로 판정한 팝업 여부를 가져오거나 설정합니다.</para>
+			/// \endif
+			/// \if EN
+			/// <para>Gets or sets whether the <c>_Popup</c> suffix identified the view as a popup.</para>
+			/// \endif
 			/// </summary>
 			public bool IsPopup { get; set; }
 
 			/// <summary>
-			/// @brief 싱글톤이 아닐 때 고유 키(멀티 인스턴스 구별용).
+			/// \if KO
+			/// <para>비싱글톤 뷰 모델 인스턴스를 구분하는 고유 키를 가져오거나 설정합니다.</para>
+			/// \endif
+			/// \if EN
+			/// <para>Gets or sets the unique key that distinguishes a non-singleton view-model instance.</para>
+			/// \endif
 			/// </summary>
 			public string? UniqueKey { get; set; }
 		}
 
 		/// <summary>
-		/// @brief View 타입명을 기반으로 View를 생성하고 ViewModel을 바인딩합니다.
-		/// @details
-		///  - FIX:
-		///    - View 생성은 반드시 <see cref="ResolveFrameworkElement"/> 를 통해 수행합니다.
-		///      (Page를 UserControl/ContentControl에 직접 넣으면 WPF 규칙 위반으로 예외 발생)
-		///    - ViewModel이 없어도 View는 생성하여 화면이 표시되도록 합니다.
-		///    - Page는 Frame으로 감싸서 반환되므로, 어디에 embed 하더라도 안정적으로 동작합니다.
-		/// @Param typeName View의 풀네임(끝이 "_Popup"이면 팝업 플래그 처리)
-		/// @Param useSingletonView ViewModel을 싱글톤으로 resolve할지 여부
-		/// @returns 뷰 인스턴스/뷰모델 메타 정보
+		/// \if KO
+		/// <para>형식 이름으로 뷰를 만들고 규칙에 맞는 뷰 모델을 연결하여 로드 결과를 반환합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Creates a view by type name, wires a convention-matched view model, and returns the load result.</para>
+		/// \endif
 		/// </summary>
-		/// <summary>
-		/// \brief Loads a view and wires its ViewModel by naming conventions.
-		/// \param typeName View type name (short or full). Can end with "_Popup".
-		/// \param useSingletonView True to reuse singleton View/ViewModel.
-		/// \return LoadedViewInfo.
-		/// </summary>
+		/// <param name="typeName">
+		/// \if KO
+		/// <para>짧거나 정규화된 뷰 형식 이름이며 <c>_Popup</c>으로 끝날 수 있습니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The short or qualified view type name, optionally ending in <c>_Popup</c>.</para>
+		/// \endif
+		/// </param>
+		/// <param name="useSingletonView">
+		/// \if KO
+		/// <para>컨테이너에서 싱글톤 뷰 모델을 확인하려면 <see langword="true"/>입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para><see langword="true"/> to resolve a singleton view model from the container.</para>
+		/// \endif
+		/// </param>
+		/// <returns>
+		/// \if KO
+		/// <para>임베드 가능한 뷰와 뷰 모델 메타데이터입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The embeddable view and view-model metadata.</para>
+		/// \endif
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		/// \if KO
+		/// <para><paramref name="typeName"/>이 <see langword="null"/>일 때 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="typeName"/> is <see langword="null"/>.</para>
+		/// \endif
+		/// </exception>
+		/// <exception cref="MissingMethodException">
+		/// \if KO
+		/// <para>비싱글톤 뷰 모델에 매개변수 없는 생성자가 없을 때 발생할 수 있습니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>May be thrown when a non-singleton view model has no parameterless constructor.</para>
+		/// \endif
+		/// </exception>
 		public static LoadedViewInfo LoadViewWithViewModel(string typeName, bool useSingletonView)
 		{
 			// \brief Parse popup suffix
@@ -147,20 +207,37 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		}
 
 		/// <summary>
-		/// \brief Resolves a ViewModel type with strict rules to avoid selecting View types as ViewModel.
-		/// Details:
-		///  - Candidates ALWAYS end with "ViewModel".
-		///  - Candidates are filtered to types assignable to ViewModelBase (or at least not FrameworkElement).
-		/// \param actualTypeName Actual view type name without "_Popup".
-		/// \param viewType Resolved view type (can be null).
-		/// \return ViewModel type or null.
+		/// \if KO
+		/// <para>이름 끝의 <c>View</c> 접미사를 대소문자 구분 없이 제거합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Removes a trailing <c>View</c> suffix without case sensitivity.</para>
+		/// \endif
 		/// </summary>
-		/// <summary>
-		/// \brief Strips a trailing "View" suffix from a type name so that "PopupView" → "Popup"
-		/// instead of naively appending "ViewModel" and producing "PopupViewViewModel".
-		/// \details Most consumers name their View/ViewModel pairs as "{Name}View"/"{Name}ViewModel"
-		/// (e.g. CounterView/CounterViewModel), not "{Name}View" + "ViewModel" literal concatenation.
-		/// </summary>
+		/// <param name="name">
+		/// \if KO
+		/// <para>검사할 형식 이름입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The type name to inspect.</para>
+		/// \endif
+		/// </param>
+		/// <returns>
+		/// \if KO
+		/// <para>접미사가 제거된 이름이며 접미사가 없으면 원래 이름입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The name without the suffix, or the original name when no suffix exists.</para>
+		/// \endif
+		/// </returns>
+		/// <exception cref="NullReferenceException">
+		/// \if KO
+		/// <para><paramref name="name"/>이 <see langword="null"/>일 때 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="name"/> is <see langword="null"/>.</para>
+		/// \endif
+		/// </exception>
 		private static string StripViewSuffix(string name)
 		{
 			const string suffix = "View";
@@ -169,6 +246,46 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 			return name;
 		}
 
+		/// <summary>
+		/// \if KO
+		/// <para>네임스페이스 및 접미사 후보 중 구체적인 <see cref="ViewModelBase"/> 파생 형식을 찾습니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Finds a concrete <see cref="ViewModelBase"/> subtype among namespace and suffix candidates.</para>
+		/// \endif
+		/// </summary>
+		/// <param name="actualTypeName">
+		/// \if KO
+		/// <para><c>_Popup</c> 접미사를 제거한 실제 뷰 형식 이름입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The actual view type name without the <c>_Popup</c> suffix.</para>
+		/// \endif
+		/// </param>
+		/// <param name="viewType">
+		/// \if KO
+		/// <para>확인된 뷰 형식이며 찾지 못했으면 <see langword="null"/>입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The resolved view type, or <see langword="null"/> when unavailable.</para>
+		/// \endif
+		/// </param>
+		/// <returns>
+		/// \if KO
+		/// <para>규칙과 기본 형식 조건을 만족하는 뷰 모델 형식이며 없으면 <see langword="null"/>입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>A view-model type satisfying naming and base-type rules, or <see langword="null"/> if none exists.</para>
+		/// \endif
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		/// \if KO
+		/// <para><paramref name="actualTypeName"/>이 <see langword="null"/>일 때 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="actualTypeName"/> is <see langword="null"/>.</para>
+		/// \endif
+		/// </exception>
 		private static Type? ResolveViewModelType_Strict(string actualTypeName, Type? viewType)
 		{
 			// \brief Candidate full names
@@ -266,22 +383,53 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		}
 
 		/// <summary>
-		/// @brief 주어진 타입으로부터 임베드 가능한 FrameworkElement를 만듭니다.
-		/// @details
-		/// - UserControl → 그대로
-		/// - Page → Frame에 호스팅(Navigation UI 숨김, History 독립)
-		/// - Window → Content 떼서 ContentControl로 래핑
-		/// - FrameworkElement → 그대로
-		/// - null/실패 → 간단한 안내 UserControl 반환
-		/// - <paramref name="resetDataContext"/> 가 true일 때만 DataContext를 초기화합니다.
-		/// <Param name="viewType">생성할 View 타입.</Param>
-		/// <Param name="typeName">디버깅용 타입 이름.</Param>
-		/// <Param name="resetDataContext">
-		///  - true  : Region/ViewLoader가 ViewModel을 책임질 때, 기존 DataContext를 모두 제거합니다.<br/>
-		///  - false : 기존 DataContext(부모 상속, AutoWireDesignViewModel 등)를 유지합니다.
-		/// </Param>
-		/// <returns>임베드 가능한 <see cref="FrameworkElement"/> 인스턴스.</returns>
+		/// \if KO
+		/// <para>뷰 형식 인스턴스를 만들고 WPF 형식별 규칙에 따라 임베드 가능한 요소로 변환합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Creates a view-type instance and converts it to an embeddable element according to WPF type rules.</para>
+		/// \endif
 		/// </summary>
+		/// <param name="viewType">
+		/// \if KO
+		/// <para>만들 뷰 형식이며 없으면 안내 요소를 반환합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The view type to create; an informational element is returned when it is absent.</para>
+		/// \endif
+		/// </param>
+		/// <param name="typeName">
+		/// \if KO
+		/// <para>오류 안내에 사용할 뷰 형식 이름입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The view type name used in diagnostic messages.</para>
+		/// \endif
+		/// </param>
+		/// <param name="resetDataContext">
+		/// \if KO
+		/// <para>기존 데이터 컨텍스트를 제거하려면 <see langword="true"/>입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para><see langword="true"/> to clear existing data contexts.</para>
+		/// \endif
+		/// </param>
+		/// <returns>
+		/// \if KO
+		/// <para>사용자 컨트롤, 프레임, 콘텐츠 호스트 또는 안내 텍스트로 표현된 임베드 가능 요소입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>An embeddable user control, frame, content host, or informational text element.</para>
+		/// \endif
+		/// </returns>
+		/// <remarks>
+		/// \if KO
+		/// <para>생성 실패는 안내용 <see cref="TextBlock"/>으로 변환되며 호출자에게 예외를 전파하지 않습니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Creation failures are converted to an informational <see cref="TextBlock"/> rather than propagated.</para>
+		/// \endif
+		/// </remarks>
 		private static FrameworkElement ResolveFrameworkElement(Type? viewType, string typeName, bool resetDataContext) 
 		{
 			if (viewType == null || viewType.IsAbstract)
@@ -412,15 +560,37 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		}
 
 		/// <summary>
-		/// @brief 프레임/호스트 내부 실제 컨텐츠에 ViewModel(DataContext)을 적용합니다.
-		/// @details
-		///   - 이 메서드는 ViewModel 타입이 정상적으로 resolve 된 경우에만 호출됩니다.
-		///   - 기존 DataContext 유무와 관계없이 지정된 ViewModel로 덮어씁니다.
-		///   - Frame은 Navigation 컨테이너 특성상 즉시 Content가 없을 수 있으므로
-		///     Navigated/Loaded 타이밍을 모두 커버합니다.
-		/// <Param name="root">DataContext를 주입할 루트 요소.</Param>
-		/// <Param name="vm">ViewModel 인스턴스.</Param>
+		/// \if KO
+		/// <para>루트와 실제 호스트 콘텐츠에 뷰 모델을 데이터 컨텍스트로 적용합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Applies the view model as the data context of both the root and its hosted content.</para>
+		/// \endif
 		/// </summary>
+		/// <param name="root">
+		/// \if KO
+		/// <para>데이터 컨텍스트를 받을 루트 요소입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The root element that receives the data context.</para>
+		/// \endif
+		/// </param>
+		/// <param name="vm">
+		/// \if KO
+		/// <para>적용할 뷰 모델 인스턴스입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The view-model instance to apply.</para>
+		/// \endif
+		/// </param>
+		/// <remarks>
+		/// \if KO
+		/// <para>프레임 콘텐츠가 아직 없으면 다음 탐색 또는 로드 시 한 번 적용하며, null 입력은 무시합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>If frame content is not yet available, assignment occurs once on the next navigation or load; null inputs are ignored.</para>
+		/// \endif
+		/// </remarks>
 		private static void ApplyDataContext(FrameworkElement root, object vm)
 		{
 			if (root == null || vm == null)
@@ -435,6 +605,25 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 				fr.DataContext = vm;
 
 				// 로컬: 실제 컨텐츠에 주입
+#pragma warning disable CS1587 // Doxygen documents local functions; the C# compiler does not attach XML docs to them.
+/// \cond LOCAL_FUNCTION_DOCUMENTATION
+				/// <summary>
+				/// \if KO
+				/// <para>지정한 프레임 콘텐츠 요소에 현재 뷰 모델을 즉시 적용합니다.</para>
+				/// \endif
+				/// \if EN
+				/// <para>Immediately applies the current view model to the specified frame-content element.</para>
+				/// \endif
+				/// </summary>
+				/// <param name="fe">
+				/// \if KO
+				/// <para>데이터 컨텍스트를 설정할 프레임 콘텐츠 요소입니다.</para>
+				/// \endif
+				/// \if EN
+				/// <para>The frame-content element whose data context is set.</para>
+				/// \endif
+				/// </param>
+/// \endcond
 				void TrySet(FrameworkElement fe)
 				{
 					if (fe != null)
@@ -442,8 +631,36 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 						fe.DataContext = vm;
 					}
 				}
+#pragma warning restore CS1587
 
 				// 로컬: Loaded 이후 1회성 주입
+#pragma warning disable CS1587 // Doxygen documents local functions; the C# compiler does not attach XML docs to them.
+/// \cond LOCAL_FUNCTION_DOCUMENTATION
+				/// <summary>
+				/// \if KO
+				/// <para>프레임 콘텐츠가 로드되면 이벤트 구독을 해제하고 뷰 모델을 한 번 적용합니다.</para>
+				/// \endif
+				/// \if EN
+				/// <para>Detaches the event and applies the view model once frame content is loaded.</para>
+				/// \endif
+				/// </summary>
+				/// <param name="s">
+				/// \if KO
+				/// <para>로드된 프레임 콘텐츠 요소입니다.</para>
+				/// \endif
+				/// \if EN
+				/// <para>The loaded frame-content element.</para>
+				/// \endif
+				/// </param>
+				/// <param name="e">
+				/// \if KO
+				/// <para>로드 이벤트 데이터이며 이 처리기에서는 사용하지 않습니다.</para>
+				/// \endif
+				/// \if EN
+				/// <para>The load event data, which this handler does not use.</para>
+				/// \endif
+				/// </param>
+/// \endcond
 				void OnLoaded(object? s, RoutedEventArgs e)
 				{
 					if (s is FrameworkElement fe)
@@ -452,8 +669,36 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 						TrySet(fe);
 					}
 				}
+#pragma warning restore CS1587
 
 				// 로컬: 네비게이션 직후 1회성 주입
+#pragma warning disable CS1587 // Doxygen documents local functions; the C# compiler does not attach XML docs to them.
+/// \cond LOCAL_FUNCTION_DOCUMENTATION
+				/// <summary>
+				/// \if KO
+				/// <para>프레임 탐색이 완료되면 새 콘텐츠에 뷰 모델을 적용하고 일회성 탐색 구독을 해제합니다.</para>
+				/// \endif
+				/// \if EN
+				/// <para>Applies the view model to newly navigated frame content and removes the one-shot navigation subscription.</para>
+				/// \endif
+				/// </summary>
+				/// <param name="s">
+				/// \if KO
+				/// <para>탐색 이벤트를 발생시킨 프레임이며 이 처리기에서는 캡처된 프레임을 사용합니다.</para>
+				/// \endif
+				/// \if EN
+				/// <para>The frame that raised the event; this handler uses the captured frame instance.</para>
+				/// \endif
+				/// </param>
+				/// <param name="e">
+				/// \if KO
+				/// <para>탐색 이벤트 데이터이며 이 처리기에서는 사용하지 않습니다.</para>
+				/// \endif
+				/// \if EN
+				/// <para>The navigation event data, which this handler does not use.</para>
+				/// \endif
+				/// </param>
+/// \endcond
 				void OnNavigated(object? s, NavigationEventArgs e)
 				{
 					fr.Navigated -= OnNavigated;
@@ -468,6 +713,7 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 						TrySet(fe);
 					}
 				}
+#pragma warning restore CS1587
 
 				// 현재 시점에 컨텐츠가 있으면 즉시/Loaded에서 주입
 				if (fr.Content is FrameworkElement current)
@@ -502,8 +748,45 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 
 
 		/// <summary>
-		/// @brief 리소스 병합(윈도우 → 호스트).
+		/// \if KO
+		/// <para>원본 사전의 병합 사전과 중복되지 않는 리소스를 대상에 추가합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Adds merged dictionaries and nonduplicate resources from a source dictionary to a target.</para>
+		/// \endif
 		/// </summary>
+		/// <param name="target">
+		/// \if KO
+		/// <para>리소스를 받을 대상 사전입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The target dictionary that receives resources.</para>
+		/// \endif
+		/// </param>
+		/// <param name="source">
+		/// \if KO
+		/// <para>복사할 원본 사전입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The source dictionary to copy.</para>
+		/// \endif
+		/// </param>
+		/// <exception cref="NullReferenceException">
+		/// \if KO
+		/// <para><paramref name="target"/> 또는 <paramref name="source"/>가 <see langword="null"/>일 때 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="target"/> or <paramref name="source"/> is <see langword="null"/>.</para>
+		/// \endif
+		/// </exception>
+		/// <exception cref="ArgumentException">
+		/// \if KO
+		/// <para>대상 사전에 추가할 수 없는 키가 있을 때 발생할 수 있습니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>May be thrown when a key cannot be added to the target dictionary.</para>
+		/// \endif
+		/// </exception>
 		private static void MergeResources(ResourceDictionary target, ResourceDictionary source)
 		{
 			foreach (var rd in source.MergedDictionaries)
@@ -515,8 +798,37 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		}
 
 		/// <summary>
-		/// @brief 안전한 타입 열거(ReflectionTypeLoadException 보호).
+		/// \if KO
+		/// <para>로드 가능한 형식만 반환하여 부분적인 어셈블리 형식 로드 실패를 허용합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Returns loadable types while tolerating partial assembly type-load failures.</para>
+		/// \endif
 		/// </summary>
+		/// <param name="asm">
+		/// \if KO
+		/// <para>형식을 열거할 어셈블리입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The assembly whose types are enumerated.</para>
+		/// \endif
+		/// </param>
+		/// <returns>
+		/// \if KO
+		/// <para>어셈블리에서 성공적으로 로드된 형식 배열입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The array of types successfully loaded from the assembly.</para>
+		/// \endif
+		/// </returns>
+		/// <exception cref="NullReferenceException">
+		/// \if KO
+		/// <para><paramref name="asm"/>가 <see langword="null"/>일 때 발생합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Thrown when <paramref name="asm"/> is <see langword="null"/>.</para>
+		/// \endif
+		/// </exception>
 		private static Type[] GetTypesSafe(this Assembly asm)
 		{
 			try { return asm.GetTypes(); }
@@ -524,8 +836,53 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		}
 
 		/// <summary>
-		/// @brief 안전한 SelectMany(동적 어셈블리 스킵).
+		/// \if KO
+		/// <para>동적 어셈블리를 건너뛰고 선택자 실패를 기록하면서 결과를 평탄화합니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Flattens selector results while skipping dynamic assemblies and logging selector failures.</para>
+		/// \endif
 		/// </summary>
+		/// <typeparam name="T">
+		/// \if KO
+		/// <para>선택자가 반환하는 요소 형식입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The element type returned by the selector.</para>
+		/// \endif
+		/// </typeparam>
+		/// <param name="assemblies">
+		/// \if KO
+		/// <para>검사할 어셈블리 시퀀스입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The assembly sequence to inspect.</para>
+		/// \endif
+		/// </param>
+		/// <param name="selector">
+		/// \if KO
+		/// <para>각 어셈블리에서 요소를 선택할 함수입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>The function that selects elements from each assembly.</para>
+		/// \endif
+		/// </param>
+		/// <returns>
+		/// \if KO
+		/// <para>성공한 선택 결과의 지연 시퀀스입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>A deferred sequence of successful selector results.</para>
+		/// \endif
+		/// </returns>
+		/// <exception cref="NullReferenceException">
+		/// \if KO
+		/// <para><paramref name="assemblies"/> 또는 열거된 항목이 <see langword="null"/>일 때 발생할 수 있습니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>May be thrown when <paramref name="assemblies"/> or an enumerated item is <see langword="null"/>.</para>
+		/// \endif
+		/// </exception>
 		private static IEnumerable<T> SelectManySafe<T>(this IEnumerable<Assembly> assemblies, Func<Assembly, IEnumerable<T>> selector)
 		{
 			foreach (var a in assemblies)
@@ -539,13 +896,31 @@ namespace Dreamine.UI.Wpf.Controls.ViewRegion
 		}
 
 		/// <summary>
-		/// @brief FrameworkElement를 감싸 임베드 가능한 UserControl로 제공하는 래퍼.
+		/// \if KO
+		/// <para>임의의 프레임워크 요소를 사용자 컨트롤 콘텐츠로 감싸는 내부 호스트입니다.</para>
+		/// \endif
+		/// \if EN
+		/// <para>Provides an internal host that wraps any framework element as user-control content.</para>
+		/// \endif
 		/// </summary>
 		private sealed class EmbeddedHostControl : UserControl
 		{
 			/// <summary>
-			/// @Param inner 임베드할 요소
+			/// \if KO
+			/// <para>지정한 요소를 콘텐츠로 사용하는 새 호스트를 만듭니다.</para>
+			/// \endif
+			/// \if EN
+			/// <para>Initializes a new host whose content is the specified element.</para>
+			/// \endif
 			/// </summary>
+			/// <param name="inner">
+			/// \if KO
+			/// <para>임베드할 프레임워크 요소입니다.</para>
+			/// \endif
+			/// \if EN
+			/// <para>The framework element to embed.</para>
+			/// \endif
+			/// </param>
 			public EmbeddedHostControl(FrameworkElement inner)
 			{
 				Content = inner;
